@@ -1,8 +1,9 @@
 import DiyLogo from "../../../public/images/banners/diy-logo.png";
 import Image from "next/image";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import Link from "next/link";
 import Router from "next/router";
+import Swal from "sweetalert2"
 
 export default function RegisterAgree(props) {
 
@@ -39,15 +40,16 @@ export default function RegisterAgree(props) {
         setAgreeYn(value);
     }
 
+    const agreeAlertRef = useRef(null);
+
     const onNextStepHandler = () => {
         if (AgreeYn === "Y") {
-            console.log(true);
             Router.push({
                 pathname: "/user/register/create",
                 query: { agreeYn: "Y" }
             }, "/user/register/create");
         } else {
-            console.log(false);
+            agreeAlertRef.current.className = "mb-4"
             return false
         }
     }
@@ -56,7 +58,7 @@ export default function RegisterAgree(props) {
         <div className="flex justify-center items-center mt-10 w-screen">
             <div className="flex flex-col justify-center items-center bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 sm:w-4/6 lg:w-3/5">
                 <Image src={DiyLogo} alt="로고" />
-                <div className="grid grid-cols-3 gap-4 lg:w-3/4 m-auto my-8 break-words">
+                <div className="grid grid-cols-3 gap-4 lg:w-2/4 m-auto my-8 break-words">
                     <div className="border-t-4 border-green-500 pt-4">
                         <p className="uppercase text-green-500 font-bold">Step 1</p>
 
@@ -76,6 +78,15 @@ export default function RegisterAgree(props) {
                 <p className="text-2xl font-bold mb-4">약관 동의</p>
                 <textarea className="form-textarea w-full h-96 mb-8" value={agreementText} readOnly />
 
+                <div className="mb-4 hidden" role="alert" ref={ agreeAlertRef }>
+                    <div className="bg-red-500 text-white font-bold rounded-t px-4 py-2">
+                        약관 동의
+                    </div>
+                    <div className="border border-t-0 border-red-400 rounded-b bg-red-100 px-4 py-3 text-red-700">
+                        <p>약관 동의 후, 회원가입을 진행할 수 있습니다.</p>
+                    </div>
+                </div>
+
                 <div className="mb-4">
                     <input className="form-radio mr-1" type="radio" id="agreeY" name="agreeYn" value="Y" onChange={onAgreeYnHandler} />
                     <label className="mr-6" htmlFor="agreeY">동의합니다.</label>
@@ -85,8 +96,10 @@ export default function RegisterAgree(props) {
 
                 <div className="flex justify-center space-x-4 flex-row">
 
-                    <button className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded" onClick={ onNextStepHandler }>다음</button>
-                    <button className="bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded">취소</button>
+                    <button className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded" onClick={onNextStepHandler}>다음</button>
+                    <Link href="/">
+                        <button className="bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded">취소</button>
+                    </Link>
                 </div>
             </div>
         </div>

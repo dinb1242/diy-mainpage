@@ -7,7 +7,7 @@ import MainBannder from "../public/images/banners/main_banner.jpg";
 export default function Home() {
   return (
     <div className="relative flex flex-col items-center justify-center min-h-screen py-2">
-      <Image className="object-cover" src={MainBannder} alt="메인 배너" layout="fill" priority={true} />
+      <Image className="object-cover" src={MainBannder} alt="메인 배너" layout="fill" loading="eager" />
 
       <div id="main-banner-conatiner" className="flex justify-center items-center flex-col z-0 text-white">
         <p className="text-3xl mb-4 animate-fade-in-down">딥아이를 시작해보세요.</p>
