@@ -37,7 +37,7 @@ export default function Login() {
 
     return (
         <div className="flex justify-center min-h-screen">
-            <div className="relative w-full max-w-xs lg:top-40 top-20">
+            <div className="w-full max-w-xs lg:top-40 top-20 pt-12">
                 <form ref={ formRef } action="/api/user/auth" method="POST" className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
                     <div className="mb-4">
                         <div className="flex w-full justify-center mb-4">

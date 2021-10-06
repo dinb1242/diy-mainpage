@@ -238,7 +238,7 @@ function RegisterCreate(props) {
     if (router.query.agreeYn === "Y") {
         return (
             <div className="flex justify-center items-center mt-10">
-                <form ref={ formRef } action="/api/user/register" method="POST" className="flex flex-col justify-center items-center bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 lg:w-2/5">
+                <form ref={ formRef } action="/api/user/register" method="POST" className="flex flex-col justify-center items-center bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 lg:w-6/12">
                     <Image src={DiyLogo} alt="로고" />
                     <div className="grid grid-cols-3 gap-4 lg:w-3/4 m-auto my-8">
                         <div className="border-t-4 border-green-500 pt-4">
@@ -266,7 +266,7 @@ function RegisterCreate(props) {
                         <div className="mb-2">
                             <label className="font-bold" htmlFor="username"><span className="text-red-500">*</span>이메일</label>
                             <div className="flex flex-row items-center">
-                                <input ref={emailRef} onChange={onEmailValHandler} name="email" className="mt-0 block w-full px-0.5 border-0 border-b-2 border-gray-200 focus:ring-0 focus:border-black" id="username" type="text" placeholder="username@example.com" />
+                                <input ref={emailRef} onChange={onEmailValHandler} name="username" className="mt-0 block w-full px-0.5 border-0 border-b-2 border-gray-200 focus:ring-0 focus:border-black" id="username" type="text" placeholder="username@example.com" />
                                 <button className="w-28 text-sm ml-2 border border-gray-400 bg-gray-200 rounded py-1 hover:bg-gray-300 active:bg-gray-400">중복 체크</button>
                             </div>
                             { EmailEmptyError && <p className="text-red-500 text-xs italic">이메일을 입력해주세요.</p> }
