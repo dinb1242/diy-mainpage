@@ -238,7 +238,7 @@ function RegisterCreate(props) {
     if (router.query.agreeYn === "Y") {
         return (
             <div className="flex justify-center items-center mt-10">
-                <form ref={ formRef } action="/api/user/register" method="POST" className="flex flex-col justify-center items-center bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 lg:w-6/12">
+                <form ref={ formRef } action="/api/user/create" method="POST" className="flex flex-col justify-center items-center bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 lg:w-6/12">
                     <Image src={DiyLogo} alt="로고" />
                     <div className="grid grid-cols-3 gap-4 lg:w-3/4 m-auto my-8">
                         <div className="border-t-4 border-green-500 pt-4">
@@ -328,7 +328,7 @@ function RegisterCreate(props) {
                         <div className="mb-4">
                             <span className="text-red-500">*</span><span className="font-bold">휴대번호</span>
                             <div className="flex flex-row items-center">
-                                <select ref={ telFrontRef } onChange={ onTelValHandler } name="tel-front" className="block w-20 mt-0 px-0.5 border-0 border-b-2 border-gray-200 focus:ring-0 focus:border-black">
+                                <select ref={ telFrontRef } onChange={ onTelValHandler } name="tel_front" className="block w-20 mt-0 px-0.5 border-0 border-b-2 border-gray-200 focus:ring-0 focus:border-black">
                                     <option value="010">010</option>
                                     <option value="011">011</option>
                                     <option value="016">016</option>
@@ -337,9 +337,9 @@ function RegisterCreate(props) {
                                     <option value="019">019</option>
                                     <option value="0">없음</option>
                                 </select>
-                                <input ref={ telMidRef } onChange={ onTelValHandler } name="tel-mid" className="mt-0 block text-center w-16 px-0.5 border-0 border-b-2 border-gray-200 focus:ring-0 focus:border-black" id="tel-mid" type="text" placeholder="1234" maxLength="4" pattern="[0-9]+" />
+                                <input ref={ telMidRef } onChange={ onTelValHandler } name="tel_mid" className="mt-0 block text-center w-16 px-0.5 border-0 border-b-2 border-gray-200 focus:ring-0 focus:border-black" id="tel-mid" type="text" placeholder="1234" maxLength="4" pattern="[0-9]+" />
                                 <span className="font-bold"> - </span>
-                                <input ref={ telEndRef } onChange={ onTelValHandler } name="tel-end" className="mt-0 block text-center w-16 px-0.5 border-0 border-b-2 border-gray-200 focus:ring-0 focus:border-black" id="tel-end" type="text" placeholder="5678" maxLength="4" />
+                                <input ref={ telEndRef } onChange={ onTelValHandler } name="tel_end" className="mt-0 block text-center w-16 px-0.5 border-0 border-b-2 border-gray-200 focus:ring-0 focus:border-black" id="tel-end" type="text" placeholder="5678" maxLength="4" />
                             </div>
                             { TelEmptyError &&  <p className="text-red-500 text-xs italic">휴대번호를 모두 입력해주세요.</p>}
                         </div>

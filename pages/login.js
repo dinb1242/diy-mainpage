@@ -1,11 +1,30 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useState, useRef } from "react";
+import cookie from "next-cookies";
+import jwt from "../utils/jwt";
 
 import DiyLogo from "../public/images/banners/diy-logo.png";
 
-export default function Login() {
+export async function getServerSideProps(props) {
+    const token = cookie(props).accessToken;
+    const tokenStatus = jwt.verify(token);
 
+    if(token) {
+        console.log("현재 토큰이 존재합니다.");
+    }
+
+    if(tokenStatus === -2 || tokenStatus === -3) {
+        console.log("===>유효하지 않은 토큰");
+        props.res.writeHead(304, { Location: "/login" });
+    }
+
+    return {
+        props: {}
+    }
+}
+
+export default function Login() {
     const [EmailEmptyError, setEmailEmptyError] = useState(false);
     const [PasswordEmptyError, setPasswordEmptyError] = useState(false);
 
@@ -36,7 +55,7 @@ export default function Login() {
     }
 
     return (
-        <div className="flex justify-center min-h-screen">
+        <div className="flex justify-center items-center mt-10">
             <div className="w-full max-w-xs lg:top-40 top-20 pt-12">
                 <form ref={ formRef } action="/api/user/auth" method="POST" className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
                     <div className="mb-4">
