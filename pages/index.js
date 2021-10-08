@@ -1,6 +1,7 @@
 import Head from 'next/head'
 import Image from "next/image";
 import Link from "next/link"
+import { useSelector } from 'react-redux';
 
 import MainBannder from "../public/images/banners/main_banner.jpg";
 

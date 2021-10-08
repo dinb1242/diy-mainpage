@@ -1,4 +1,4 @@
-import MysqlQuery from "../../../utils/db";
+import mysqlQuery from "../../../utils/db";
 import Bcrypt from "bcryptjs";
 
 export default async function Register(req, res) {
@@ -23,7 +23,7 @@ export default async function Register(req, res) {
         dataObj.password = Bcrypt.hashSync(dataObj.password, saltRounds);
         dataObj.telWhole = Bcrypt.hashSync(dataObj.telWhole, saltRounds);
 
-        const results = await MysqlQuery.query(
+        const results = await mysqlQuery.query(
             `INSERT INTO tb_member(
                 member_username,
                 member_password,
@@ -40,7 +40,7 @@ export default async function Register(req, res) {
             dataObj.gender, dataObj.address, dataObj.telWhole, dataObj.company, dataObj.dept, dataObj.position]
         )
 
-        await MysqlQuery.end();
+        await mysqlQuery.end();
 
         console.log("===>쿼리 성공!");
         console.log(results);

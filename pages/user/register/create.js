@@ -28,6 +28,7 @@ function RegisterCreate(props) {
 
     const [NameEmptyError, setNameEmptyError] = useState(false);
     const [BirthdayEmptyError, setBirthdayEmptyError] = useState(false);
+    const [BirthdayFormatError, setBirthdayFormatError] = useState(false);
     const [GenderEmptyError, setGenderEmptyError] = useState(false);
     const [AddressEmptyError, setAddressEmptyError] = useState(false);
     const [TelEmptyError, setTelEmptyError] = useState(false);
@@ -131,8 +132,18 @@ function RegisterCreate(props) {
     const onBirthValHandler = (event) => {
         event.preventDefault();
         const { value } = event.target;
+        const yearLastIndex = value.indexOf('-');
+        const year = value.substring(0, yearLastIndex);
+
+        if(year.length != 4) {
+            console.log("===>올바르지 않은 년도");
+            setBirthdayFormatError(true);
+        } else {
+            setBirthdayFormatError(false);
+        }
         // 공백을 검사한다.
         if(!value) {
+            setBirthdayFormatError(false);
             setBirthdayEmptyError(true);
         } else {
             setBirthdayEmptyError(false);
@@ -191,40 +202,10 @@ function RegisterCreate(props) {
         event.preventDefault();
         let _status = true;
 
-        if(!emailRef.current.value) {
-            setEmailEmptyError(true);
-            _status = false;
-        }
-
-        if(!passwordRef.current.value) {
-            setPasswordEmptyError(true);
-            _status = false;
-        }
-
-        if(!nameRef.current.value) {
-            setNameEmptyError(true);
-            _status = false;
-        }
-
-        if(!birthRef.current.value) {
-            setBirthdayEmptyError(true);
-            _status = false;
-        }
-
-        if(!Gender) {
-            setGenderEmptyError(true);
-            _status = false;
-        }
-
-        if(!addressRef.current.value) {
-            setAddressEmptyError(true);
-            _status = false;
-        }
-
-        if(!telFrontRef.current.value || !telMidRef.current.value || !telEndRef.current.value) {
-            setTelEmptyError(true);
-            _status = false;
-        }
+        if(EmailEmptyError || EmailFormatError || PasswordEmptyError || PasswordFormatError || PasswordConfirmError || 
+            NameEmptyError || BirthdayEmptyError || BirthdayFormatError || GenderEmptyError || AddressEmptyError || TelEmptyError) {
+                _status = false;
+            }
 
         if(!_status){
             setFormError(true);
@@ -307,6 +288,7 @@ function RegisterCreate(props) {
                             <label className="font-bold" htmlFor="birthday"><span className="text-red-500">*</span>생년월일</label>
                             <input ref={ birthRef } onChange={ onBirthValHandler } onChange={ onBirthValHandler } name="birthday" className="mt-0 block w-full px-0.5 border-0 border-b-2 border-gray-200 focus:ring-0 focus:border-black" id="birthday" type="date" placeholder="생년월일" />
                             { BirthdayEmptyError && <p className="text-red-500 text-xs italic">생년월일을 입력해주세요.</p>}
+                            { BirthdayFormatError &&  <p className="text-red-500 text-xs italic">올바른 년도가 아닙니다.</p>}
                         </div>
                         <div className="mb-4">
                             <p className="font-bold mb-2"><span className="text-red-500">*</span>성별</p>
@@ -387,8 +369,16 @@ function RegisterCreate(props) {
         )
     } else {
         return (
-            <div>
-                Error
+            <div className="flex flex-col items-center py-12">
+                <p className="text-2xl font-bold mb-8">만료된 페이지입니다.</p>
+                <div className="space-x-4">
+                    <Link href="/">
+                        <button className="bg-blue-500 rounded px-4 py-2 text-white hover:bg-blue-600">메인 페이지로 이동</button>
+                    </Link>
+                    <Link href="/user/register/agree">
+                        <button className="bg-gray-300 rounded px-4 py-2 text-black hover:bg-gray-400">회원가입 초기 페이지로 이동</button>
+                    </Link>
+                </div>
             </div>
         )
     }

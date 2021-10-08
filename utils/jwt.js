@@ -4,6 +4,7 @@ import randToken from "rand-token";
 const secret = process.env.JWT.secretKey;
 const accessTokenOptions = process.env.JWT.accessTokenOptions;
 const refreshTokenOptions = process.env.JWT.refreshTokenOptions;
+
 const TOKEN_EXPIRED = -3;
 const TOKEN_INVALID = -2;
 
@@ -24,11 +25,25 @@ module.exports = {
         return tokens;
     },
 
+    accessRenewal: async (user) => {
+        const payload = {
+            seq: user.seq,
+            username: user.username,
+            name: user.name
+        }
+
+        return jwt.sign(payload, secret, accessTokenOptions);
+    },
+
+    refreshRenewal: async () => {
+        return jwt.sign({}, secret, refreshTokenOptions);
+    },
+
     decode: async (token) => {
         return jwt.decode(token);
     },
     
-    verify: async (accessToken) => {
+    verify: async (token) => {
         let decoded;
         try {
             decoded = jwt.verify(token, secret);

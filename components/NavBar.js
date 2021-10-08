@@ -1,9 +1,13 @@
 import NavBarLink from "./NavBarLink"
 import Image from "next/image";
+import { useSelector } from "react-redux";
 
 import DiyLogo from "../public/images/banners/diy-logo.png";
 
 export default function NavBar() {
+    const { username, name, isLogined } = useSelector((state) => state.user);
+    console.log(username, name, isLogined);
+
     return (
         <nav className="shadow-md flex items-center justify-between flex-wrap bg-gray-50 p-6">
             <div className="flex items-center flex-shrink-0 text-white mr-6">
@@ -25,11 +29,29 @@ export default function NavBar() {
                         더 알아보기
                     </a>
                 </div>
-                <div className="text-sm">
-                    <a className="block lg:border lg:border-black lg:rounded lg:px-4 lg:py-2  mt-4 lg:inline-block lg:mt-0 hover:text-blue-500 mr-4 cursor-pointer">
-                        로그인
-                    </a>
-                </div>
+
+                {!isLogined &&
+                    <NavBarLink href="/login">
+                        <div className="text-sm">
+                            <a className="block lg:border lg:border-black lg:rounded lg:px-4 lg:py-2  mt-4 lg:inline-block lg:mt-0 hover:text-blue-500 mr-4 cursor-pointer">
+                                로그인
+                            </a>
+                        </div>
+                    </NavBarLink>
+                }
+                {isLogined &&
+                    <div className="flex flex-row items-center">
+                        <span className="mr-4"><span className="text-blue-500">{ name }</span>님, 환영합니다.</span>
+                        <NavBarLink href="/user/logout">
+                            <div className="text-sm">
+                                <a className="block lg:border lg:border-black lg:rounded lg:px-4 lg:py-2  mt-4 lg:inline-block lg:mt-0 hover:text-blue-500 mr-4 cursor-pointer">
+                                    로그아웃
+                                </a>
+                            </div>
+                        </NavBarLink>
+                    </div>
+                }
+
             </div>
         </nav>
     )

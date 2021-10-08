@@ -1,19 +1,26 @@
 import 'tailwindcss/tailwind.css'
 import Layout from '../components/Layout'
-import App from "next/app";
+import wrapper from '../components/store/configureStore'
+import { PersistGate } from "redux-persist/integration/react"
+import { useStore } from "react-redux"
 
 function MyApp({ Component, pageProps }) {
+  const store = useStore();
   if (Component.name === "Home") {
     return (
+      <PersistGate loading={ null } persistor={ store.__persistor }>
         <Component {...pageProps} />
+      </PersistGate>
     )
   }
 
   return (
-      <Layout>
-        <Component {...pageProps} />
-      </Layout>
+    <PersistGate loading={ null } persistor={ store.__persistor }>
+    <Layout>
+      <Component {...pageProps} />
+    </Layout>
+    </PersistGate>
   )
 }
 
-export default MyApp
+export default wrapper.withRedux(MyApp)

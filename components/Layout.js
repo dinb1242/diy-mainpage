@@ -2,7 +2,7 @@ import Header from "next/head";
 import NavBar from "./NavBar";
 import Footer from "./Footer";
 
-export default function Layout({ children }) {
+function Layout({ children }) {
     return (
         <div>
             <Header>
@@ -15,3 +15,5 @@ export default function Layout({ children }) {
         </div>
     )
 }
+
+export default Layout;

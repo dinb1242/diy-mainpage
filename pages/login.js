@@ -3,20 +3,19 @@ import Link from "next/link";
 import { useState, useRef } from "react";
 import cookie from "next-cookies";
 import jwt from "../utils/jwt";
-
+import Router from "next/router";
 import DiyLogo from "../public/images/banners/diy-logo.png";
+import axios from "axios";
+import { useDispatch } from "react-redux"
+import { setUserInfo } from "../components/store/action/userAction";
 
 export async function getServerSideProps(props) {
-    const token = cookie(props).accessToken;
-    const tokenStatus = jwt.verify(token);
-
-    if(token) {
-        console.log("현재 토큰이 존재합니다.");
-    }
-
-    if(tokenStatus === -2 || tokenStatus === -3) {
-        console.log("===>유효하지 않은 토큰");
-        props.res.writeHead(304, { Location: "/login" });
+    const accessToken = cookie(props).accessToken;
+    const accessTokenStatus = await jwt.verify(accessToken);
+    
+    if(accessTokenStatus !== -2 && accessTokenStatus !== -3) {
+        console.log(`===>Auth Checked`);
+        props.res.writeHead(304, { Location: "/" });
     }
 
     return {
@@ -25,8 +24,14 @@ export async function getServerSideProps(props) {
 }
 
 export default function Login() {
+    const dispatch = useDispatch();
+
     const [EmailEmptyError, setEmailEmptyError] = useState(false);
+    const [EmailFormatError, setEmailFormatError] = useState(false);
+    const [EmailFormatYn, setEmailFormatYn] = useState(false);
     const [PasswordEmptyError, setPasswordEmptyError] = useState(false);
+
+    const [LoginAuthError, setLoginAuthError] = useState(false);
 
     const formRef = useRef(null);
     const emailRef = useRef(null);
@@ -37,7 +42,18 @@ export default function Login() {
 
         let _status = true;
 
+        // 이메일 형식을 검사한다.
+        const emailRegExp = new RegExp(/^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i);
+        if(!emailRegExp.test(emailRef.current.value)) {
+            setEmailEmptyError(false);
+            setEmailFormatError(true);
+            _status = false;
+        } else {
+            setEmailFormatError(false);
+        }
+
         if(!emailRef.current.value) {
+            setEmailFormatError(false);
             setEmailEmptyError(true);
             _status = false;
         }
@@ -50,7 +66,31 @@ export default function Login() {
         if(!_status) {
             return false;
         } else {
-            formRef.current.submit();
+            axios({
+                url: "/api/user/auth",
+                method: "POST",
+                data: {
+                    username: emailRef.current.value,
+                    password: passwordRef.current.value
+                }
+            }).then((res) => {
+                if(!res.data.loginAuth) {
+                    setLoginAuthError(true);
+                } else {
+                    console.log("===>로그인 성공");
+                    console.log(res.data.username);
+                    console.log(res.data.name);
+                    dispatch(setUserInfo({
+                        username: res.data.username,
+                        name: res.data.name,
+                        isLogined: true
+                    }));
+                    Router.push("/user/mypage");
+                }
+            }).catch((err) => {
+                console.log("===>요청 실패");
+                console.log(err);
+            })
         }
     }
 
@@ -67,6 +107,7 @@ export default function Login() {
                         </label>
                         <input name="username" ref={ emailRef } className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-2 leading-tight focus:outline-none focus:shadow-outline" id="username" type="text" placeholder="E-Mail" />
                         { EmailEmptyError && <p className="text-red-500 text-xs italic">이메일을 입력해주세요.</p>}
+                        { EmailFormatError && <p className="text-red-500 text-xs italic">이메일을 형식에 맞게 입력하세요.</p>}
                     </div>
                     <div className="mb-6">
                         <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="password">
@@ -75,6 +116,19 @@ export default function Login() {
                         <input name="password" ref={ passwordRef } className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-2 leading-tight focus:outline-none focus:shadow-outline" id="password" type="password" placeholder="********" />
                         { PasswordEmptyError && <p className="text-red-500 text-xs italic">패스워드를 입력해주세요.</p>}
                     </div>
+
+                    { LoginAuthError && 
+                        <div className="mb-4 col-span-2" role="alert">
+                            <div className="bg-red-500 text-white font-bold rounded-t px-4 py-2">
+                                로그인 실패
+                            </div>
+                            <div className="border border-t-0 border-red-400 rounded-b bg-red-100 px-4 py-3 text-red-700">
+                                <p><b>필수 입력란이 누락</b>되어있거나, <b>올바르지 않은 형식의 데이터가 삽입</b>되었습니다.</p>
+                                <p>확인 후 다시 진행해주세요.</p>
+                            </div>
+                        </div>
+                    }
+
                     <div className="flex items-center justify-between w-full">
                         <button type="submit" onClick={ onLoginHandler } className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="button">
                             로그인
