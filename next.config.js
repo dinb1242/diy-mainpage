@@ -4,7 +4,7 @@ module.exports = {
         MYSQL_PORT: "3306",
         MYSQL_DATABASE: "diy",
         MYSQL_USER: "root",
-        MYSQL_PASSWORD: "server402!",
+        MYSQL_PASSWORD: "1234",
         JWT: {
             secretKey: "TeStKeY",
             accessTokenOptions: {

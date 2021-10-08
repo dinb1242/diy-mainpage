@@ -16,6 +16,9 @@ export default (state = initialState, { type, payload }) => {
                 isLogined: payload.isLogined
             }
 
+        case types.DELETE_USERINFO:
+            return initialState;
+
         default:
             return state
     }
