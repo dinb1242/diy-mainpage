@@ -4,6 +4,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { changeUsermode } from "./store/action/userAction";
 
 import DiyLogo from "../public/images/banners/diy-logo.png";
+import { useState } from "react";
 
 export default function NavBar() {
     const { username, name, isLogined, isAdmin } = useSelector(
@@ -14,14 +15,14 @@ export default function NavBar() {
 
     const onAdminChangeHandler = () => {
         dispatch(changeUsermode({
-            adminMode: true
+            adminMode: false
         }))
     }
 
     return (
         <nav className="shadow-md flex items-center justify-between flex-wrap bg-gray-50 p-6">
             <div className="flex items-center flex-shrink-0 text-white mr-6">
-                <NavBarLink href="/">
+                <NavBarLink href="/admin/main">
                     <a>
                         <Image
                             className="cursor-pointer"
@@ -35,17 +36,17 @@ export default function NavBar() {
                 <div className=" lg:flex-grow">
                     <NavBarLink href="/">
                         <a className="block mt-4  lg:px-8 lg:py-2 lg:inline-block lg:mt-0 hover:text-blue-500 mr-4">
-                            홈
+                            관리자 메인
                         </a>
                     </NavBarLink>
                     <NavBarLink href="/diy/select">
                         <a className="block lg:px-4 lg:py-2  mt-4 lg:inline-block lg:mt-0 hover:text-blue-500 mr-4 cursor-pointer">
-                            시작하기
+                            미정 1
                         </a>
                     </NavBarLink>
                     <NavBarLink href="/about">
                         <a className="block lg:px-4 lg:py-2  mt-4 lg:inline-block lg:mt-0 hover:text-blue-500 mr-4 cursor-pointer">
-                            더 알아보기
+                            미정 2
                         </a>
                     </NavBarLink>
                 </div>
@@ -75,11 +76,9 @@ export default function NavBar() {
                     </div>
                 )}
                 {isAdmin == 1 && (
-                    <NavBarLink href="/admin/main">
-                        <a onClick={ onAdminChangeHandler } className="block lg:px-4 lg:py-2 text-yellow-500 lg:bg-yellow-500 lg:rounded lg:text-white mt-4 lg:inline-block lg:mt-0 hover:text-yellow-200 mr-4 cursor-pointer">
-                            관리자 페이지
+                        <a onClick={ onAdminChangeHandler } className="block lg:px-4 lg:py-2 bg-yellow-500 rounded text-white mt-4 lg:inline-block lg:mt-0 hover:text-yellow-200 mr-4 cursor-pointer">
+                            관리자 페이지 나가기
                         </a>
-                    </NavBarLink>
                 )}
             </div>
         </nav>

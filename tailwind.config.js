@@ -1,8 +1,13 @@
+const defaultThemes = require("tailwindcss/defaultTheme");
+
 module.exports = {
   mode: 'jit',
   purge: ['./pages/**/*.{js,ts,jsx,tsx}', './components/**/*.{js,ts,jsx,tsx}'],
   darkMode: false, // or 'media' or 'class'
   theme: {
+    fontFamily: {
+      'sans': ['Noto Sans KR', ...defaultThemes.fontFamily.sans]
+    },
     extend: {
       keyframes: {
         'fade-in-down': {
@@ -36,6 +41,10 @@ module.exports = {
     extend: {},
   },
   plugins: [
-    require("@tailwindcss/forms")
+    require("@tailwindcss/forms"),
+    require('daisyui')
   ],
+  daisyui: {
+    themes: false
+  },
 }

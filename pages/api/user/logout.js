@@ -1,10 +1,12 @@
-import storage from "redux-persist/lib/storage/session";
+import mysqlQuery from "../../../utils/db";
 
 export default async function Logout(req, res) {
     try {
         // DB에서 사용자 지우는 작업도 해야함.
-        console.log("===>로그아웃 API");
-        console.log(req.body);
+        mysqlQuery.query("DELETE FROM tb_refresh_token WHERE token_member=?",
+        [
+            req.body.username
+        ])
         res.setHeader("Set-Cookie", [
             `refreshToken=; path=/; expires=-1;`,
             `accessToken=; path=/; expires=-1;`,

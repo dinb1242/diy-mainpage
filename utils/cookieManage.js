@@ -34,6 +34,9 @@ async function renewRefreshToken(fakeRefreshToken, expLeftDay) {
  */
 export default async function cookieManage(tokens, res) {
     const accessToken = tokens.accessToken;
+    if(!accessToken || accessToken === "") {
+        res.writeHead(302, { Location: "/login" });
+    }
     const fakeRefreshToken = tokens.refreshToken;
     const accessTokenStatus = await jwt.verify(accessToken);
     const userFromToken = await jwt.decode(accessToken);

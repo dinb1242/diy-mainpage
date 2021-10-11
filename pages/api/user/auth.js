@@ -15,6 +15,11 @@ export default async function Auth(req, res) {
         }
 
         if(bcrypt.compareSync(req.body.password, user[0].member_password)) {
+            // 유저 활성화 여부를 검사한다.
+            if(user[0].member_enabled_yn === 0) {
+                console.log("===>활성화 되지 않은 유저입니다.");
+                return res.json({isEnabled: 0})
+            }
 
             // 전달받은 Access Token, Refresh Token을 저장한다.
             const jwtTokens = await jwt.sign(user[0]);
@@ -29,10 +34,12 @@ export default async function Auth(req, res) {
 
             await mysqlQuery.end();
             res.setHeader("Set-Cookie", [`accessToken=${jwtTokens.accessToken}; path=/;`, `refreshToken=${fakeRefreshToken}; path=/;`]);
+
             return res.json({
                 loginAuth: true,
                 username: user[0].member_username,
-                name: user[0].member_name
+                name: user[0].member_name,
+                adminYn: user[0].member_admin_yn
             });
         } else {
             await mysqlQuery.end();

@@ -12,3 +12,12 @@ export function deleteUserInfo() {
         type: types.DELETE_USERINFO
     }
 }
+
+export function changeUsermode(payload) {
+    console.log("===>Change Usermode");
+    console.log(payload);
+    return {
+        type: types.CHANGE_USERMODE,
+        payload
+    }
+}

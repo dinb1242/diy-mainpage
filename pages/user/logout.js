@@ -8,7 +8,6 @@ import Link from "next/link";
 export async function getServerSideProps(props) {
     const accessToken = cookie(props).accessToken;
     const accessTokenStatus = await jwt.verify(accessToken);
-    const user = await jwt.decode(accessToken);
 
     if (accessTokenStatus === -2 && accessTokenStatus === -3) {
         props.res.writeHead(304, { Location: "/login" });
@@ -30,7 +29,6 @@ export default function Logout(props) {
         },
     })
         .then((res) => {
-            console.log(res.data);
             if (res.data.success) {
                 dispatch(deleteUserInfo());
                 console.log("===>로그아웃 되었습니다.");
@@ -39,8 +37,6 @@ export default function Logout(props) {
         .catch((err) => {
             console.log(err);
         });
-
-    dispatch(deleteUserInfo());
 
     return (
         <div className="flex flex-col justify-center items-center mt-10 w-screen h-96">

@@ -7,7 +7,7 @@ export default async function Register(req, res) {
         password: req.body.password,
         name: req.body.name,
         birthday: req.body.birthday,
-        gender: req.body.gender,
+        gender: req.body.gender == 1 ? 'M' : 'F',
         address: req.body.address,
         telFront: req.body.tel_front,
         telMid: req.body.tel_mid,
