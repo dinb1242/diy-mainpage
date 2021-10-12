@@ -100,10 +100,12 @@ export default function Login() {
                         console.log(res.data.name);
                         dispatch(
                             setUserInfo({
+                                seq: res.data.seq,
                                 username: res.data.username,
                                 name: res.data.name,
                                 isLogined: true,
-                                isAdmin: res.data.adminYn
+                                isAdmin: res.data.adminYn,
+                                logId: res.data.logId
                             })
                         );
                         Router.push("/diy/select");

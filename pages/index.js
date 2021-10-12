@@ -7,7 +7,6 @@ import MainBannder from "../public/images/banners/main_banner.jpg";
 
 export default function Home() {
     const { isLogined } = useSelector((state) => state.user);
-    console.log(isLogined);
 
     return (
         <div className="relative flex flex-col items-center justify-center min-h-screen py-2">

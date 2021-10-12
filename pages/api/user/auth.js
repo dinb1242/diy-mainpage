@@ -27,19 +27,32 @@ export default async function Auth(req, res) {
             
             await mysqlQuery.query(`INSERT INTO tb_refresh_token(token_id, 
                     token_value, 
-                    token_member, 
+                    token_member_seq, 
                     token_expire) 
                 VALUES(?, ?, ?, ?)`, 
-                [fakeRefreshToken, jwtTokens.refreshToken, user[0].member_username, new Date(await jwt.decode(jwtTokens.refreshToken).then(res => res.exp)*1000)]);
+                [fakeRefreshToken, jwtTokens.refreshToken, user[0].member_seq, new Date(await jwt.decode(jwtTokens.refreshToken).then(res => res.exp)*1000)]);
+
+            await mysqlQuery.query(`
+            INSERT INTO tb_access_history(log_member_seq, log_login_date)
+            VALUES(?, ?)
+            `, [
+                user[0].member_seq,
+                new Date()
+            ]);
+
+            const lastInsertId = await mysqlQuery.query("SELECT LAST_INSERT_ID() AS log_id");
+            const logId = lastInsertId[0].log_id;
 
             await mysqlQuery.end();
             res.setHeader("Set-Cookie", [`accessToken=${jwtTokens.accessToken}; path=/;`, `refreshToken=${fakeRefreshToken}; path=/;`]);
 
             return res.json({
                 loginAuth: true,
+                seq: user[0].member_seq,
                 username: user[0].member_username,
                 name: user[0].member_name,
-                adminYn: user[0].member_admin_yn
+                adminYn: user[0].member_admin_yn,
+                logId: logId
             });
         } else {
             await mysqlQuery.end();

@@ -2,10 +2,14 @@ import mysqlQuery from "../../../utils/db";
 
 export default async function Logout(req, res) {
     try {
-        // DB에서 사용자 지우는 작업도 해야함.
-        mysqlQuery.query("DELETE FROM tb_refresh_token WHERE token_member=?",
+        await mysqlQuery.query('UPDATE tb_access_history SET log_logout_date=? WHERE log_id=?',
         [
-            req.body.username
+            new Date(),
+            req.body.logId
+        ])
+    await mysqlQuery.query("DELETE FROM tb_refresh_token WHERE token_member_seq=?",
+        [
+            req.body.seq
         ])
         res.setHeader("Set-Cookie", [
             `refreshToken=; path=/; expires=-1;`,

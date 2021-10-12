@@ -18,14 +18,16 @@ export async function getServerSideProps(props) {
 }
 
 export default function Logout(props) {
-    const { username } = useSelector((state) => state.user);
+    const { username, logId, seq } = useSelector((state) => state.user);
     const dispatch = useDispatch();
 
     axios({
         url: "/api/user/logout",
         method: "POST",
         data: {
+            seq: seq,
             username: username,
+            logId: logId
         },
     })
         .then((res) => {
@@ -48,9 +50,9 @@ export default function Logout(props) {
                 stroke="currentColor"
             >
                 <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
                     d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
                 />
             </svg>

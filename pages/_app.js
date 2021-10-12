@@ -1,6 +1,5 @@
 import "tailwindcss/tailwind.css";
 import Layout from "../components/Layout";
-import AdminLayout from "../components/AdminLayout";
 import wrapper from "../components/store/configureStore";
 import { PersistGate } from "redux-persist/integration/react";
 import { useStore, useSelector } from "react-redux";
@@ -8,7 +7,6 @@ import Header from "next/head";
 
 function MyApp({ Component, pageProps }) {
     const store = useStore();
-    const { adminMode } = useSelector((state) => state.user);
     if (Component.name === "Home") {
         return (
             <PersistGate loading={null} persistor={store.__persistor}>

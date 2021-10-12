@@ -1,22 +1,26 @@
 import * as types from "../types/types";
 
 const initialState = {
+    seq: "",
     username: "",
     name: "",
     isLogined: false,
     isAdmin: false,
-    adminMode: false
+    adminMode: false,
+    logId: ""
 }
 
-export default (state = initialState, { type, payload }) => {
+function userReducer(state = initialState, { type, payload }) {
     switch (type) {
         case types.SET_USERINFO:
             return {
                 ...state,
+                seq: payload.seq,
                 username: payload.username,
                 name: payload.name,
                 isLogined: payload.isLogined,
-                isAdmin: payload.isAdmin
+                isAdmin: payload.isAdmin,
+                logId: payload.logId
             }
 
         case types.DELETE_USERINFO:
@@ -32,3 +36,5 @@ export default (state = initialState, { type, payload }) => {
             return state
     }
 }
+
+export default userReducer;

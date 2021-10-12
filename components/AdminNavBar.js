@@ -34,19 +34,19 @@ export default function NavBar() {
             </div>
             <div className="w-full block flex-grow lg:flex lg:items-center lg:w-auto">
                 <div className=" lg:flex-grow">
-                    <NavBarLink href="/">
-                        <a className="block mt-4  lg:px-8 lg:py-2 lg:inline-block lg:mt-0 hover:text-blue-500 mr-4">
+                    <NavBarLink href="/admin/main">
+                        <a className="block mt-4 lg:px-8 lg:py-2 lg:inline-block lg:mt-0 hover:text-blue-500 mr-4">
                             관리자 메인
                         </a>
                     </NavBarLink>
-                    <NavBarLink href="/diy/select">
+                    <NavBarLink href="/admin/user/manage">
                         <a className="block lg:px-4 lg:py-2  mt-4 lg:inline-block lg:mt-0 hover:text-blue-500 mr-4 cursor-pointer">
-                            미정 1
+                            회원 관리
                         </a>
                     </NavBarLink>
-                    <NavBarLink href="/about">
+                    <NavBarLink href="/admin/user/statistics">
                         <a className="block lg:px-4 lg:py-2  mt-4 lg:inline-block lg:mt-0 hover:text-blue-500 mr-4 cursor-pointer">
-                            미정 2
+                            회원 통계
                         </a>
                     </NavBarLink>
                 </div>
@@ -66,19 +66,14 @@ export default function NavBar() {
                             <span className="text-blue-500">{name}</span>님,
                             환영합니다.
                         </span>
-                        <NavBarLink href="/user/logout">
-                            <div className="text-sm">
-                                <a className="block lg:border lg:border-black lg:rounded lg:px-4 lg:py-2  mt-4 lg:inline-block lg:mt-0 hover:text-blue-500 mr-4 cursor-pointer">
-                                    로그아웃
-                                </a>
-                            </div>
-                        </NavBarLink>
                     </div>
                 )}
                 {isAdmin == 1 && (
-                        <a onClick={ onAdminChangeHandler } className="block lg:px-4 lg:py-2 bg-yellow-500 rounded text-white mt-4 lg:inline-block lg:mt-0 hover:text-yellow-200 mr-4 cursor-pointer">
+                    <NavBarLink href="/">
+                        <a onClick={onAdminChangeHandler} className="block lg:px-4 lg:py-2 bg-yellow-500 rounded text-white mt-4 lg:inline-block lg:mt-0 hover:text-yellow-200 mr-4 cursor-pointer">
                             관리자 페이지 나가기
-                        </a>
+                        </a></NavBarLink>
+
                 )}
             </div>
         </nav>
