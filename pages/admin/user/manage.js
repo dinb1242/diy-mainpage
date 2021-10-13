@@ -3,20 +3,60 @@ import cookieManage from "../../../utils/cookieManage";
 import cookie from "next-cookies"
 import axios from "axios";
 import { Dialog, Transition } from '@headlessui/react'
-import { CogIcon } from "@heroicons/react/solid"
+import { CogIcon, SelectorIcon, CheckIcon, ChevronDownIcon } from "@heroicons/react/solid"
 import { Fragment, useState, useMemo } from 'react'
 import { setDefaultLocale, registerLocale } from "react-datepicker";
 import ko from "date-fns/locale/ko";
 registerLocale("ko", ko);
 import "react-datepicker/dist/react-datepicker.css";
 import Router from "next/router"
+import { Listbox, Popover, Switch } from "@headlessui/react"
+import jsonSort from "../../../utils/jsonSort";
+
+const cols = [
+    { name: '번호' },
+    { name: '아이디' },
+    { name: '이름' },
+    { name: '생년월일' },
+    { name: '성별' },
+    { name: '회사(학교)' },
+    { name: '부서(학과)' },
+    { name: '직급(신분)' },
+    { name: '가입 일자' },
+    { name: '인증 여부' },
+    { name: '관리자 여부' },
+    { name: '상태' },
+]
+
+const solutions = [
+    {
+        name: '테스트1',
+        description: '테스트 내용 1',
+        href: '##',
+    },
+    {
+        name: '테스트 2',
+        description: '테스트 내용 2',
+        href: '##',
+    },
+    {
+        name: '테스트 3',
+        description: '테스트 내용 3',
+        href: '##',
+    },
+]
 
 export async function getServerSideProps(props) {
     await cookieManage(cookie(props), props.res);
 
+    if (props.query.length === 0) {
+        props.query["filter"] = "allUser";
+    }
+
     const { data } = await axios({
         url: "http://localhost:3000/api/admin/user/userlist",
-        method: "POST"
+        method: "POST",
+        data: props.query.length !== 0 ? props.query : {}
     })
 
     return {
@@ -27,6 +67,12 @@ export async function getServerSideProps(props) {
 }
 
 export default function UserManage(props) {
+    // 현재 필터 셀렉트에서 선택된 값을 담을 State
+    const [selected, setSelected] = useState(cols[0])
+
+    // 오름차순 내림차순 스위치 State
+    const [enabled, setEnabled] = useState(false);
+
     let [isOpen, setIsOpen] = useState(false)
 
     // DB에서 가져온 유저 정보에 대한 State
@@ -105,6 +151,34 @@ export default function UserManage(props) {
         setIsOpen(true)
     }
 
+    // 정렬 기능을 구현한다. (일반 유저, 관리자, 그 외 테이블 정렬)
+    const onFilterDataHandler = (event) => {
+        event.preventDefault();
+        const currentTarget = event.target.id;
+
+        if (currentTarget === "allUser") {
+            Router.replace({
+                pathname: Router.basePath,
+                query: { filter: "allUser" },
+            })
+        } else if (currentTarget === "commonUser") {
+            Router.replace({
+                pathname: Router.basePath,
+                query: { filter: "commonUser" },
+            })
+        } else if (currentTarget === "adminUser") {
+            Router.replace({
+                pathname: Router.basePath,
+                query: { filter: "adminUser" },
+            })
+        } else if (currentTarget === "userByFilter") {
+            Router.replace({
+                pathname: Router.basePath,
+                query: { filter: "userByFilter", sortBy: selected.name },
+            })
+        }
+    }
+
     const notYet = () => {
         alert("미구현 기능입니다.");
     }
@@ -114,74 +188,212 @@ export default function UserManage(props) {
 
             <div className="relative flex items-center left-1/3 lg:left-0">
                 <ClipboardListIcon className="inline-block w-10 h-10 mr-2" />
-                <span className="text-4xl font-bold">회원 관리</span>
+                <span className="text-4xl font-bold">회원 관리(개발 중)</span>
             </div>
 
-            <div className="mt-4 w-4/5">
-                <button>일괄 인증 승인</button>
+            {/* 상단 메뉴 바 */}
+            <div className="flex flex-col items-center justify-center gap-y-4 lg:gap-y-0 lg:divide-x-0 lg:grid lg:grid-cols-5 lg:w-4/5 w-full mt-12">
+                {/* 좌측 바 */}
+                <div className="flex lg:mb-0 lg:flex-row lg:justify-start lg:items-center">
+                    <button id="allUser" onClick={onFilterDataHandler} className="bg-gray-50 shadow hover:bg-gray-100 px-4 py-2 rounded mr-2">전체 회원</button>
+                    <button id="commonUser" onClick={onFilterDataHandler} className="bg-gray-50 shadow hover:bg-gray-100 px-4 py-2 rounded mr-2">일반 회원</button>
+                    <button id="adminUser" onClick={onFilterDataHandler} className="bg-blue-200 shadow hover:bg-blue-300 px-4 py-2 rounded">관리자</button>
+                </div>
+
+                {/* 중앙 바 */}
+                <div className="flex lg:mb-0 lg:justify-center lg:items-center lg:col-start-3">
+                    <button className="bg-green-100  hover:bg-green-200 px-4 py-2 rounded text-black" onClick={() => { alert("준비 중인 기능입니다.") }}>일괄 인증 승인</button>
+                </div>
+
+                {/* 우측 바 */}
+                <div className="flex justify-end items-center lg:col-start-4 lg:col-span-2">
+                    <span className="text-sm text-center mr-2">오름차순 On/Off</span>
+                    <Switch
+                        checked={enabled}
+                        onChange={setEnabled}
+                        className={`${enabled ? 'bg-blue-900' : 'bg-blue-400'}
+                        relative mr-4 inline-flex flex-shrink-0 h-[24px] w-[50px] border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none focus-visible:ring-2  focus-visible:ring-white focus-visible:ring-opacity-75`}
+                    >
+                        <span
+                            aria-hidden="true"
+                            className={`${enabled ? 'translate-x-6' : 'translate-x-0'}
+            pointer-events-none inline-block h-[20px] w-[20px] rounded-full bg-white shadow-lg transform ring-0 transition ease-in-out duration-200`}
+                        />
+                    </Switch>
+                    <Listbox value={selected} onChange={setSelected}>
+                        <div className="relative w-44">
+                            <Listbox.Button className="relative w-full py-2 pl-3 pr-10 text-left bg-white hover:bg-gray-50 active:bg-gray-100 rounded-lg shadow-md cursor-default focus:outline-none focus-visible:ring-2 focus-visible:ring-opacity-75 focus-visible:ring-white focus-visible:ring-offset-orange-300 focus-visible:ring-offset-2 focus-visible:border-indigo-500 sm:text-sm">
+                                <span className="block truncate">{selected.name}</span>
+                                <span className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+                                    <SelectorIcon
+                                        className="w-5 h-5 text-gray-400"
+                                        aria-hidden="true"
+                                    />
+                                </span>
+                            </Listbox.Button>
+                            <Transition
+                                as={Fragment}
+                                leave="transition ease-in duration-100"
+                                leaveFrom="opacity-100"
+                                leaveTo="opacity-0"
+                            >
+                                <Listbox.Options className="absolute w-full py-1 mt-1 overflow-auto text-base bg-white rounded-md shadow-lg max-h-60 ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+                                    {cols.map((col, colIdx) => (
+                                        <Listbox.Option
+                                            key={colIdx}
+                                            className={({ active }) =>
+                                                `${active ? 'text-amber-900 bg-amber-100' : 'text-gray-900'}
+                                                cursor-default select-none relative py-2 pl-10 pr-4 hover:bg-gray-50`
+                                            }
+                                            value={col}
+                                        >
+                                            {({ selected, active }) => (
+                                                <>
+                                                    <span
+                                                        className={`${selected ? 'font-medium' : 'font-normal'
+                                                            } block truncate`}
+                                                    >
+                                                        {col.name}
+                                                    </span>
+                                                    {selected ? (
+                                                        <span
+                                                            className={`${active ? 'text-amber-600' : 'text-amber-600'
+                                                                }
+                                absolute inset-y-0 left-0 flex items-center pl-3`}
+                                                        >
+                                                            <CheckIcon className="w-5 h-5" aria-hidden="true" />
+                                                        </span>
+                                                    ) : null}
+                                                </>
+                                            )}
+                                        </Listbox.Option>
+                                    ))}
+                                </Listbox.Options>
+                            </Transition>
+                        </div>
+                    </Listbox>
+                    <button id="userByFilter" onClick={onFilterDataHandler} className="bg-gray-50 drop-shadow hover:bg-gray-100 px-5 py-2 rounded mr-4">정렬</button>
+                    <Popover className="relative">
+                        {({ open }) => (
+                            <>
+                                <Popover.Button
+                                    className={`
+                ${open ? '' : 'text-opacity-90'}
+                text-black group bg-gray-50 hover:bg-gray-100 drop-shadow px-5 py-2 rounded inline-flex items-center hover:text-opacity-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75`}
+                                >
+                                    <span>검색</span>
+                                    <ChevronDownIcon
+                                        className={`${open ? '' : 'text-opacity-70'}
+                                        ml-2 h-5 w-5 text-orange-300 group-hover:text-opacity-80 transition ease-in-out duration-150`}
+                                        aria-hidden="true"
+                                    />
+                                </Popover.Button>
+                                <Transition
+                                    as={Fragment}
+                                    enter="transition ease-out duration-200"
+                                    enterFrom="opacity-0 translate-y-1"
+                                    enterTo="opacity-100 translate-y-0"
+                                    leave="transition ease-in duration-150"
+                                    leaveFrom="opacity-100 translate-y-0"
+                                    leaveTo="opacity-0 translate-y-1"
+                                >
+                                    <Popover.Panel className="absolute z-10 w-screen max-w-sm px-4 mt-3 transform -translate-x-1/2 left-1/2 sm:px-0 lg:max-w-3xl">
+                                        <div className="overflow-hidden rounded-lg shadow-lg ring-1 ring-black ring-opacity-5">
+                                            <div className="relative grid gap-8 bg-white p-7 lg:grid-cols-2">
+                                                {solutions.map((item) => (
+                                                    <a
+                                                        key={item.name}
+                                                        href={item.href}
+                                                        className="flex items-center p-2 -m-3 transition duration-150 ease-in-out rounded-lg hover:bg-gray-50 focus:outline-none focus-visible:ring focus-visible:ring-orange-500 focus-visible:ring-opacity-50"
+                                                    >
+                                                        <div className="ml-4">
+                                                            <p className="text-sm font-medium text-gray-900">
+                                                                {item.name}
+                                                            </p>
+                                                            <p className="text-sm text-gray-500">
+                                                                {item.description}
+                                                            </p>
+                                                        </div>
+                                                    </a>
+                                                ))}
+                                            </div>
+                                            <div className="p-4 bg-gray-50">
+                                                <a
+                                                    href="##"
+                                                    className="flow-root px-2 py-2 transition duration-150 ease-in-out rounded-md hover:bg-gray-100 focus:outline-none focus-visible:ring focus-visible:ring-orange-500 focus-visible:ring-opacity-50"
+                                                >
+                                                    <span className="flex items-center">
+                                                        <span className="text-sm font-medium text-gray-900">
+                                                            Documentation
+                                                        </span>
+                                                    </span>
+                                                    <span className="block text-sm text-gray-500">
+                                                        Start integrating products and tools
+                                                    </span>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </Popover.Panel>
+                                </Transition>
+                            </>
+                        )}
+                    </Popover>
+                </div>
             </div>
-    
+
             <table className="table-auto mt-8 text-center" style={{ width: "1680px" }}>
                 <thead>
-                    {/* {headerGroups.map(headerGroup => (
-                        <tr {...headerGroup.getHeaderGroupProps()}>
-                            {headerGroup.headers.map(column => (
-                                <th {...column.getHeaderProps()}>{column.render("Header")}</th>
-                            ))}
-                            <th>변경</th>
-                        </tr>
-                    ))} */}
                     <tr>
-                            <th>번호</th>
-                            <th>아이디</th>
-                            <th>이름</th>
-                            <th>생년월일</th>
-                            <th>성별</th>
-                            <th>주소</th>
-                            <th>휴대번호</th>
-                            <th>회사(학교)</th>
-                            <th>부서(학과)</th>
-                            <th>직급(신분)</th>
-                            <th>가입 일자</th>
-                            <th>인증 여부</th>
-                            <th>관리자 여부</th>
-                            <th>상태</th>
-                            <th>변경</th>
-                        </tr>
+                        <th>번호</th>
+                        <th>아이디</th>
+                        <th>이름</th>
+                        <th>생년월일</th>
+                        <th>성별</th>
+                        <th>주소</th>
+                        <th>휴대번호</th>
+                        <th>회사(학교)</th>
+                        <th>부서(학과)</th>
+                        <th>직급(신분)</th>
+                        <th>가입 일자</th>
+                        <th>인증 여부</th>
+                        <th>관리자 여부</th>
+                        <th>상태</th>
+                        <th>변경</th>
+                    </tr>
                 </thead>
                 <tbody>
-                        {
-                            props.userList.map((user) => {
-                                return (
-                                    <tr key={user.member_seq}>
-                                        <td>{user.member_seq}</td>
-                                        <td>{user.member_username}</td>
-                                        <td>{user.member_name}</td>
-                                        <td>{user.member_birthday}</td>
-                                        <td>{user.member_gender}</td>
-                                        <td>{user.member_address}</td>
-                                        <td>{user.member_tel}</td>
-                                        <td>{user.member_company}</td>
-                                        <td>{user.member_dept}</td>
-                                        <td>{user.member_position}</td>
-                                        <td>{user.member_reg_date}</td>
-                                        {user.member_enabled_yn == 1 ?
-                                            <td>인증</td> :
-                                            <td>미인증</td>
-                                        }
-                                        {user.member_admin_yn == 1 ?
-                                            <td>예</td> :
-                                            <td>아니오</td>
-                                        }
-                                        <td>{user.member_status}</td>
-                                        <td>
-                                            <button id={user.member_seq} onClick={openModal} className="px-4 py-2 rounded bg-blue-500 hover:bg-blue-600 text-white">변경</button>
-                                        </td>
-                                    </tr>
-                                )
-                            })
-                        }
-                    </tbody>
+                    {
+                        props.userList.map((user) => {
+                            return (
+                                <tr key={user.member_seq}>
+                                    <td>{user.member_seq}</td>
+                                    <td>{user.member_username}</td>
+                                    <td>{user.member_name}</td>
+                                    <td>{user.member_birthday}</td>
+                                    <td>{user.member_gender}</td>
+                                    <td>{user.member_address}</td>
+                                    <td>{user.member_tel}</td>
+                                    <td>{user.member_company}</td>
+                                    <td>{user.member_dept}</td>
+                                    <td>{user.member_position}</td>
+                                    <td>{user.member_reg_date}</td>
+                                    {user.member_enabled_yn == 1 ?
+                                        <td>인증</td> :
+                                        <td>미인증</td>
+                                    }
+                                    {user.member_admin_yn == 1 ?
+                                        <td>예</td> :
+                                        <td>아니오</td>
+                                    }
+                                    <td>{user.member_status}</td>
+                                    <td>
+                                        <button id={user.member_seq} onClick={openModal} className="px-4 py-2 rounded bg-blue-500 hover:bg-blue-600 text-white">변경</button>
+                                    </td>
+                                </tr>
+                            )
+                        })
+                    }
+                </tbody>
             </table>
 
             {/* 회원 관리 버튼 클릭 시 모달창 */}
@@ -313,7 +525,7 @@ export default function UserManage(props) {
                                     </div>
                                     <div className="flex flex-col">
                                         <p className="font-bold">인증 여부</p>
-                                        <select name="enableYn" onChange={onInputChange} defaultValue={Inputs.enabledYn}>
+                                        <select name="enabledYn" onChange={onInputChange} defaultValue={Inputs.enabledYn}>
                                             <option value="0">미인증</option>
                                             <option value="1">인증</option>
                                         </select>
