@@ -174,7 +174,7 @@ export default function UserManage(props) {
         } else if (currentTarget === "userByFilter") {
             Router.replace({
                 pathname: Router.basePath,
-                query: { filter: "userByFilter", sortBy: selected.name },
+                query: { filter: "userByFilter", sortBy: selected.name, descYn: enabled },
             })
         }
     }
@@ -192,7 +192,7 @@ export default function UserManage(props) {
             </div>
 
             {/* 상단 메뉴 바 */}
-            <div className="flex flex-col items-center justify-center gap-y-4 lg:gap-y-0 lg:divide-x-0 lg:grid lg:grid-cols-5 lg:w-4/5 w-full mt-12">
+            <div className="flex flex-col items-center justify-center gap-y-4 lg:gap-y-0 lg:divide-x-0 lg:grid lg:grid-cols-3 lg:w-4/5 w-full mt-12">
                 {/* 좌측 바 */}
                 <div className="flex lg:mb-0 lg:flex-row lg:justify-start lg:items-center">
                     <button id="allUser" onClick={onFilterDataHandler} className="bg-gray-50 shadow hover:bg-gray-100 px-4 py-2 rounded mr-2">전체 회원</button>
@@ -201,17 +201,17 @@ export default function UserManage(props) {
                 </div>
 
                 {/* 중앙 바 */}
-                <div className="flex lg:mb-0 lg:justify-center lg:items-center lg:col-start-3">
+                <div className="flex lg:mb-0 lg:justify-center lg:items-center">
                     <button className="bg-green-100  hover:bg-green-200 px-4 py-2 rounded text-black" onClick={() => { alert("준비 중인 기능입니다.") }}>일괄 인증 승인</button>
                 </div>
 
                 {/* 우측 바 */}
-                <div className="flex justify-end items-center lg:col-start-4 lg:col-span-2">
-                    <span className="text-sm text-center mr-2">오름차순 On/Off</span>
+                <div className="flex justify-end items-center">
+                    <span className="text-sm text-center mr-2">내림차순 On/Off</span>
                     <Switch
                         checked={enabled}
                         onChange={setEnabled}
-                        className={`${enabled ? 'bg-blue-900' : 'bg-blue-400'}
+                        className={`${enabled ? 'bg-blue-600' : 'bg-blue-200'}
                         relative mr-4 inline-flex flex-shrink-0 h-[24px] w-[50px] border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none focus-visible:ring-2  focus-visible:ring-white focus-visible:ring-opacity-75`}
                     >
                         <span
@@ -243,7 +243,7 @@ export default function UserManage(props) {
                                             key={colIdx}
                                             className={({ active }) =>
                                                 `${active ? 'text-amber-900 bg-amber-100' : 'text-gray-900'}
-                                                cursor-default select-none relative py-2 pl-10 pr-4 hover:bg-gray-50`
+                                                cursor-default select-none relative py-2 pl-4 pr-4 hover:bg-gray-50`
                                             }
                                             value={col}
                                         >
@@ -341,7 +341,7 @@ export default function UserManage(props) {
                 </div>
             </div>
 
-            <table className="table-auto mt-8 text-center" style={{ width: "1680px" }}>
+            <table className="table-auto mt-8 text-center" style={{ width: "1280px" }}>
                 <thead>
                     <tr>
                         <th>번호</th>

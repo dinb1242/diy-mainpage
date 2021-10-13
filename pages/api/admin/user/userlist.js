@@ -17,6 +17,7 @@ function getDateYyyyMmDd(date) {
 export default async function GetUserList(req, res) {
     let filter = req.body.filter;
     let sortBy = req.body.sortBy;
+    let descYn = req.body.descYn === "true" ? "DESC" : "ASC";
     let userListResults = null;
 
     // filter가 한글일 경우, 컬럼에 맞게 매핑하는 작업 수행
@@ -153,9 +154,8 @@ export default async function GetUserList(req, res) {
                 member_admin_yn,
                 member_status
             FROM tb_member
-            ORDER BY ${sortBy}
+            ORDER BY ${sortBy} ${descYn}
         `)
     }
-    console.log(userListResults);
     return res.send(userListResults);
 }
