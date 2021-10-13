@@ -69,9 +69,6 @@ function RegisterCreate(props) {
                 method: "POST",
             })
                 .then((res) => {
-                    console.log("===>중복 체크 요청 성공");
-                    console.log(res);
-
                     if (res.data.usernameUsable) {
                         setEmailCheckYn(true);
                         setEmailConfirmError(false);
@@ -182,7 +179,6 @@ function RegisterCreate(props) {
         const year = value.substring(0, yearLastIndex);
 
         if (year.length != 4) {
-            console.log("===>올바르지 않은 년도");
             setBirthdayFormatError(true);
         } else {
             setBirthdayFormatError(false);
@@ -255,20 +251,6 @@ function RegisterCreate(props) {
             setEmailConfirmError(false);
         }
 
-        console.log(
-            EmailEmptyError,
-            EmailFormatError,
-            PasswordEmptyError,
-            PasswordFormatError,
-            PasswordConfirmError,
-            NameEmptyError,
-            BirthdayEmptyError,
-            BirthdayFormatError,
-            GenderEmptyError,
-            AddressEmptyError,
-            TelEmptyError
-        );
-
         if (
             EmailEmptyError ||
             EmailEmptyError === "" ||
@@ -301,8 +283,6 @@ function RegisterCreate(props) {
         }
 
         if (!_status) {
-            console.log("Status");
-            console.log(_status);
             setFormError(true);
             return false;
         } else {
@@ -504,12 +484,13 @@ function RegisterCreate(props) {
                             <input
                                 ref={birthRef}
                                 onChange={onBirthValHandler}
-                                onChange={onBirthValHandler}
                                 name="birthday"
                                 className="mt-0 block w-full px-0.5 border-0 border-b-2 border-gray-200 focus:ring-0 focus:border-black"
                                 id="birthday"
                                 type="date"
                                 placeholder="생년월일"
+                                min="1900-12-31"
+                                max={new Date().getFullYear() + "-12-31"}
                             />
                             {BirthdayEmptyError && (
                                 <p className="text-red-500 text-xs italic">

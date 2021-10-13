@@ -1,4 +1,4 @@
-import mysqlQuery from "../../../utils/db";
+import mysqlQuery from "../../../../utils/db";
 import bcrypt from "bcryptjs"
 
 function dateLeftPad(MonOrDate) {
@@ -28,7 +28,7 @@ export default async function GetUserList(req, res) {
             member_company,
             member_dept,
             member_position,
-            member_reg_date,
+            DATE_FORMAT(member_reg_date, '%Y-%m-%d %H:%i:%s') AS member_reg_date,
             member_enabled_yn,
             member_admin_yn,
             member_status
@@ -38,9 +38,6 @@ export default async function GetUserList(req, res) {
     userListResults.map((value) => {
         value.member_birthday = getDateYyyyMmDd(value.member_birthday);
     })
-
-    console.log(userListResults[0].member_tel);
-    console.log(bcrypt.decodeBase64(userListResults[0].member_tel));
 
     return res.send(userListResults);
 }

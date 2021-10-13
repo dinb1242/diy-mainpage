@@ -12,7 +12,7 @@ export default async function Register(req, res) {
         telFront: req.body.tel_front,
         telMid: req.body.tel_mid,
         telEnd: req.body.tel_end,
-        telWhole: req.body.tel_front + req.body.tel_mid + req.body.tel_end,
+        telWhole: req.body.tel_front + '-' + req.body.tel_mid + '-' + req.body.tel_end,
         company: req.body.company,
         dept: req.body.dept,
         position: req.body.position
@@ -21,7 +21,6 @@ export default async function Register(req, res) {
     try {
         const saltRounds = 10;
         dataObj.password = Bcrypt.hashSync(dataObj.password, saltRounds);
-        dataObj.telWhole = Bcrypt.hashSync(dataObj.telWhole, saltRounds);
 
         const results = await mysqlQuery.query(
             `INSERT INTO tb_member(

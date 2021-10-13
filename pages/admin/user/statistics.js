@@ -120,7 +120,7 @@ export default function UserStatistics(props) {
                             <YAxis />
                             <Tooltip />
                             <Legend />
-                            <Bar dataKey="count" fill="#82ca9d" />
+                            <Bar dataKey="count" name="가입 수" fill="#82ca9d" />
                         </BarChart>
                     </ResponsiveContainer>
                 </div>
