@@ -43,9 +43,14 @@ export default function NavBar() {
                             시작하기
                         </a>
                     </NavBarLink>
-                    <NavBarLink href="/about">
-                        <a className="block lg:px-4 lg:py-2  mt-4 lg:inline-block lg:mt-0 hover:text-blue-500 mr-4 cursor-pointer">
+                    {/* <NavBarLink href="/about"> */}
+                        <a onClick={() => {alert("준비 중입니다.")}} className="block lg:px-4 lg:py-2  mt-4 lg:inline-block lg:mt-0 hover:text-blue-500 mr-4 cursor-pointer">
                             더 알아보기
+                        </a>
+                    {/* </NavBarLink> */}
+                    <NavBarLink href="/patchnote">
+                        <a className="block lg:px-4 lg:py-2  mt-4 lg:inline-block lg:mt-0 hover:text-blue-500 mr-4 cursor-pointer">
+                            패치 노트
                         </a>
                     </NavBarLink>
                 </div>

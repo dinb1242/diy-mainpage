@@ -69,7 +69,7 @@ export default function NavBar() {
                     </div>
                 )}
                 {isAdmin == 1 && (
-                    <NavBarLink href="/">
+                    <NavBarLink href="/diy/select">
                         <a onClick={onAdminChangeHandler} className="block lg:px-4 lg:py-2 bg-yellow-500 rounded text-white mt-4 lg:inline-block lg:mt-0 hover:text-yellow-200 mr-4 cursor-pointer">
                             관리자 페이지 나가기
                         </a></NavBarLink>

@@ -3,6 +3,7 @@ import "react-toastify/dist/ReactToastify.css";
 import cookieManage from "../../utils/cookieManage";
 import cookie from "next-cookies";
 import Link from "next/link";
+import { TerminalIcon } from "@heroicons/react/outline"
 
 export async function getServerSideProps(props) {
     console.log("===>쿠키 확인");
@@ -18,7 +19,10 @@ export default function SelectDiy(props) {
 
     return (
         <div className="flex justify-center items-center flex-col mt-10 w-screen">
-            <p className="text-2xl font-bold mb-8">버전 선택</p>
+            <p className="inline-flex items-center text-3xl font-bold mb-8">
+                <TerminalIcon className="w-10 mr-2" />
+                버전 선택
+            </p>
             <div className="flex flex-col">
                 <Link href="/diy/open?ver=1" as="/diy/open">
                     <div className="relative select-none cursor-pointer mb-4 transition duration-150 px-5 py-2 rounded-xl hover:text-white hover:ring-4 hover:ring-offset-2 flex flex-col shadow-md bg-gray-50 hover:bg-blue-500 w-96 backdrop">

@@ -9,6 +9,9 @@ module.exports = {
       'sans': ['Noto Sans KR', ...defaultThemes.fontFamily.sans]
     },
     extend: {
+      scale: {
+        '-1': '-1.1',
+      },
       keyframes: {
         'fade-in-down': {
           '0%': {

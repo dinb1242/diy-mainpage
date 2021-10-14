@@ -267,14 +267,15 @@ export default function Login() {
                                     회원가입
                                 </a>
                             </Link>
-                            <Link href="/user/help/forgetPwd">
+                            {/* <Link href="/user/help/forgetPwd"> */}
                                 <a
                                     className="inline-block font-bold text-sm text-blue-500 hover:text-blue-800"
                                     href="#"
+                                    onClick={ () => {alert("준비 중인 기능입니다.")} }
                                 >
                                     비밀번호 찾기
                                 </a>
-                            </Link>
+                            {/* </Link> */}
                         </span>
                     </div>
                 </form>

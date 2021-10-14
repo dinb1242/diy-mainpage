@@ -4,7 +4,7 @@ import cookie from "next-cookies"
 import axios from "axios";
 import { Dialog, Transition } from '@headlessui/react'
 import { CogIcon, SelectorIcon, CheckIcon, ChevronDownIcon } from "@heroicons/react/solid"
-import { Fragment, useState, useMemo } from 'react'
+import { Fragment, useState } from 'react'
 import { setDefaultLocale, registerLocale } from "react-datepicker";
 import ko from "date-fns/locale/ko";
 registerLocale("ko", ko);
@@ -28,25 +28,8 @@ const cols = [
     { name: '상태' },
 ]
 
-const solutions = [
-    {
-        name: '테스트1',
-        description: '테스트 내용 1',
-        href: '##',
-    },
-    {
-        name: '테스트 2',
-        description: '테스트 내용 2',
-        href: '##',
-    },
-    {
-        name: '테스트 3',
-        description: '테스트 내용 3',
-        href: '##',
-    },
-]
-
 export async function getServerSideProps(props) {
+
     await cookieManage(cookie(props), props.res);
 
     if (props.query.length === 0) {
@@ -91,7 +74,8 @@ export default function UserManage(props) {
         dept: "",
         position: "",
         enabledYn: "",
-        adminYn: ""
+        adminYn: "",
+        searchData: ""
     })
 
     const onInputChange = (event) => {
@@ -160,22 +144,59 @@ export default function UserManage(props) {
             Router.replace({
                 pathname: Router.basePath,
                 query: { filter: "allUser" },
-            })
+            }, "/admin/user/manage")
         } else if (currentTarget === "commonUser") {
             Router.replace({
                 pathname: Router.basePath,
                 query: { filter: "commonUser" },
-            })
+            }, "/admin/user/manage")
         } else if (currentTarget === "adminUser") {
             Router.replace({
                 pathname: Router.basePath,
                 query: { filter: "adminUser" },
-            })
+            }, "/admin/user/manage")
         } else if (currentTarget === "userByFilter") {
             Router.replace({
                 pathname: Router.basePath,
                 query: { filter: "userByFilter", sortBy: selected.name, descYn: enabled },
+            }, "/admin/user/manage")
+        }
+    }
+
+    // 검색 시, 엔터 동작에 대한 이벤트
+    const onSearchEnterHandler = (event) => {
+        if(event.key === "Enter") {
+            onSearchDataHandler();
+        }
+    }
+
+    // 검색 기능을 구현한다.
+    const onSearchDataHandler = () => {
+        // 현재 sortBy 및 Search Data Input에 대한 내용을 API에 전송한다.
+        Router.replace({
+            pathname: Router.basePath,
+            query: { filter: "searchByData", sortBy: selected.name, willSearch: Inputs.searchData }
+        }, "/admin/user/manage");
+    }
+
+    // 일괄 회원 승인
+    const enableAllUsers = () => {
+        const confirmYn = confirm("일괄 승인 처리 하시겠습니까?");
+        if(confirmYn) {
+            axios({
+                url: "/api/admin/user/enable-all"
+            }).then((res) => {
+                if(res.data.success) {
+                    alert(`${res.data.modifiedUserCounts}명이 일괄 승인 처리되었습니다.`);
+                    Router.replace({
+                        pathname: Router.basePath
+                    })
+                }
+            }).catch((err) => {
+                console.log(err);
             })
+        } else {
+            return false;
         }
     }
 
@@ -192,7 +213,7 @@ export default function UserManage(props) {
             </div>
 
             {/* 상단 메뉴 바 */}
-            <div className="flex flex-col items-center justify-center gap-y-4 lg:gap-y-0 lg:divide-x-0 lg:grid lg:grid-cols-3 lg:w-4/5 w-full mt-12">
+            <div className="flex flex-col items-center justify-center gap-y-4 lg:flex-row lg:justify-between lg:w-3/4 w-full mt-12">
                 {/* 좌측 바 */}
                 <div className="flex lg:mb-0 lg:flex-row lg:justify-start lg:items-center">
                     <button id="allUser" onClick={onFilterDataHandler} className="bg-gray-50 shadow hover:bg-gray-100 px-4 py-2 rounded mr-2">전체 회원</button>
@@ -202,7 +223,7 @@ export default function UserManage(props) {
 
                 {/* 중앙 바 */}
                 <div className="flex lg:mb-0 lg:justify-center lg:items-center">
-                    <button className="bg-green-100  hover:bg-green-200 px-4 py-2 rounded text-black" onClick={() => { alert("준비 중인 기능입니다.") }}>일괄 인증 승인</button>
+                    <button onClick={ enableAllUsers } className="bg-green-100  hover:bg-green-200 px-4 py-2 rounded text-black">일괄 인증 승인</button>
                 </div>
 
                 {/* 우측 바 */}
@@ -237,13 +258,13 @@ export default function UserManage(props) {
                                 leaveFrom="opacity-100"
                                 leaveTo="opacity-0"
                             >
-                                <Listbox.Options className="absolute w-full py-1 mt-1 overflow-auto text-base bg-white rounded-md shadow-lg max-h-60 ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+                                <Listbox.Options className="absolute w-full text-sm py-1 mt-1 overflow-auto bg-white rounded-md shadow-lg max-h-60 ring-1 ring-black ring-opacity-5 focus:outline-none">
                                     {cols.map((col, colIdx) => (
                                         <Listbox.Option
                                             key={colIdx}
                                             className={({ active }) =>
                                                 `${active ? 'text-amber-900 bg-amber-100' : 'text-gray-900'}
-                                                cursor-default select-none relative py-2 pl-4 pr-4 hover:bg-gray-50`
+                                                cursor-default select-none relative py-2 pl-10 pr-4 hover:bg-gray-50`
                                             }
                                             value={col}
                                         >
@@ -272,14 +293,14 @@ export default function UserManage(props) {
                             </Transition>
                         </div>
                     </Listbox>
-                    <button id="userByFilter" onClick={onFilterDataHandler} className="bg-gray-50 drop-shadow hover:bg-gray-100 px-5 py-2 rounded mr-4">정렬</button>
+                    <button id="userByFilter" onClick={onFilterDataHandler} className="bg-gray-50 drop-shadow hover:bg-gray-100 px-5 py-2 rounded mr-4 text-sm lg:text-base">정렬</button>
                     <Popover className="relative">
                         {({ open }) => (
                             <>
                                 <Popover.Button
                                     className={`
                 ${open ? '' : 'text-opacity-90'}
-                text-black group bg-gray-50 hover:bg-gray-100 drop-shadow px-5 py-2 rounded inline-flex items-center hover:text-opacity-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75`}
+                text-black group bg-gray-50 text-sm lg:text-base hover:bg-gray-100 drop-shadow px-5 py-2 rounded inline-flex items-center hover:text-opacity-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75`}
                                 >
                                     <span>검색</span>
                                     <ChevronDownIcon
@@ -297,40 +318,11 @@ export default function UserManage(props) {
                                     leaveFrom="opacity-100 translate-y-0"
                                     leaveTo="opacity-0 translate-y-1"
                                 >
-                                    <Popover.Panel className="absolute z-10 w-screen max-w-sm px-4 mt-3 transform -translate-x-1/2 left-1/2 sm:px-0 lg:max-w-3xl">
+                                    <Popover.Panel className="absolute z-10 max-w-sm px-4 mt-3 transform -translate-x-1/2 left-1/2 sm:px-0 lg:max-w-3xl">
                                         <div className="overflow-hidden rounded-lg shadow-lg ring-1 ring-black ring-opacity-5">
-                                            <div className="relative grid gap-8 bg-white p-7 lg:grid-cols-2">
-                                                {solutions.map((item) => (
-                                                    <a
-                                                        key={item.name}
-                                                        href={item.href}
-                                                        className="flex items-center p-2 -m-3 transition duration-150 ease-in-out rounded-lg hover:bg-gray-50 focus:outline-none focus-visible:ring focus-visible:ring-orange-500 focus-visible:ring-opacity-50"
-                                                    >
-                                                        <div className="ml-4">
-                                                            <p className="text-sm font-medium text-gray-900">
-                                                                {item.name}
-                                                            </p>
-                                                            <p className="text-sm text-gray-500">
-                                                                {item.description}
-                                                            </p>
-                                                        </div>
-                                                    </a>
-                                                ))}
-                                            </div>
-                                            <div className="p-4 bg-gray-50">
-                                                <a
-                                                    href="##"
-                                                    className="flow-root px-2 py-2 transition duration-150 ease-in-out rounded-md hover:bg-gray-100 focus:outline-none focus-visible:ring focus-visible:ring-orange-500 focus-visible:ring-opacity-50"
-                                                >
-                                                    <span className="flex items-center">
-                                                        <span className="text-sm font-medium text-gray-900">
-                                                            Documentation
-                                                        </span>
-                                                    </span>
-                                                    <span className="block text-sm text-gray-500">
-                                                        Start integrating products and tools
-                                                    </span>
-                                                </a>
+                                            <div className="relative flex flex-col bg-white p-7">
+                                                <input name="searchData" type="text" placeholder={ `[${selected.name}]에 대한 검색` } onKeyDown={ onSearchEnterHandler } onChange={ onInputChange } value={Inputs.searchData} />
+                                                <button onClick={ onSearchDataHandler } className="mt-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded shadow">검색</button>
                                             </div>
                                         </div>
                                     </Popover.Panel>
@@ -341,31 +333,31 @@ export default function UserManage(props) {
                 </div>
             </div>
 
-            <table className="table-auto mt-8 text-center" style={{ width: "1280px" }}>
+            <table className="table-fixed mt-8 text-center border-separate">
                 <thead>
                     <tr>
-                        <th>번호</th>
-                        <th>아이디</th>
-                        <th>이름</th>
-                        <th>생년월일</th>
-                        <th>성별</th>
-                        <th>주소</th>
-                        <th>휴대번호</th>
-                        <th>회사(학교)</th>
-                        <th>부서(학과)</th>
-                        <th>직급(신분)</th>
-                        <th>가입 일자</th>
-                        <th>인증 여부</th>
-                        <th>관리자 여부</th>
-                        <th>상태</th>
-                        <th>변경</th>
+                        <th className="w-16">번호</th>
+                        <th className="w-32">아이디</th>
+                        <th className="w-20">이름</th>
+                        <th className="w-32">생년월일</th>
+                        <th className="w-8">성별</th>
+                        <th className="w-48">주소</th>
+                        <th className="w-40">휴대번호</th>
+                        <th className="w-40">회사(학교)</th>
+                        <th className="w-40">부서(학과)</th>
+                        <th className="w-32">직급(신분)</th>
+                        <th className="w-48">가입 일자</th>
+                        <th className="w-20">인증 여부</th>
+                        <th className="w-28">관리자 여부</th>
+                        <th className="w-8">상태</th>
+                        <th className="w-32">변경</th>
                     </tr>
                 </thead>
                 <tbody>
                     {
                         props.userList.map((user) => {
                             return (
-                                <tr key={user.member_seq}>
+                                <tr className="border-b border-gray-300" key={user.member_seq}>
                                     <td>{user.member_seq}</td>
                                     <td>{user.member_username}</td>
                                     <td>{user.member_name}</td>
@@ -567,6 +559,7 @@ export default function UserManage(props) {
             </Transition>
             <style jsx>{`
                 td {
+                    border: 1px;
                     padding: 10px;
                 }
             `}</style>
