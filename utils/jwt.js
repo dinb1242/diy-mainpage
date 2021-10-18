@@ -1,9 +1,18 @@
 import jwt from "jsonwebtoken";
 import randToken from "rand-token";
 
-const secret = process.env.JWT.secretKey;
-const accessTokenOptions = process.env.JWT.accessTokenOptions;
-const refreshTokenOptions = process.env.JWT.refreshTokenOptions;
+const SECRET = "TeStKeY";
+const ACCESS_TOKEN_OPTIONS = {
+    algorithm: "HS256",
+    expiresIn: "15m",
+    issuer: "tester"
+}
+
+const REFRESH_TOKEN_OPTIONS = {
+    algorithm: "HS256",
+    expiresIn: "7d",
+    issuer: "tester"
+}
 
 const TOKEN_EXPIRED = -3;
 const TOKEN_INVALID = -2;
@@ -18,8 +27,8 @@ module.exports = {
         }
 
         const tokens = {
-            accessToken: jwt.sign(payload, secret, accessTokenOptions),
-            refreshToken: jwt.sign({}, secret, refreshTokenOptions)
+            accessToken: jwt.sign(payload, SECRET, ACCESS_TOKEN_OPTIONS),
+            refreshToken: jwt.sign({}, SECRET, REFRESH_TOKEN_OPTIONS)
         }
 
         return tokens;
@@ -32,11 +41,11 @@ module.exports = {
             name: user.name
         }
 
-        return jwt.sign(payload, secret, accessTokenOptions);
+        return jwt.sign(payload, SECRET, ACCESS_TOKEN_OPTIONS);
     },
 
     refreshRenewal: async () => {
-        return jwt.sign({}, secret, refreshTokenOptions);
+        return jwt.sign({}, SECRET, REFRESH_TOKEN_OPTIONS);
     },
 
     decode: async (token) => {
@@ -46,7 +55,7 @@ module.exports = {
     verify: async (token) => {
         let decoded;
         try {
-            decoded = jwt.verify(token, secret);
+            decoded = jwt.verify(token, SECRET);
         } catch (err) {
             if (err.message === "jwt expired") {
                 return TOKEN_EXPIRED;

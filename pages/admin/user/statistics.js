@@ -7,7 +7,6 @@ import { ChartPieIcon, UserGroupIcon } from "@heroicons/react/outline"
 
 export async function getServerSideProps(props) {
     await cookieManage(cookie(props), props.res);
-
     const { data } = await axios({
         url: "http://localhost:3000/api/admin/statistics",
         method: "POST"
@@ -21,6 +20,7 @@ export async function getServerSideProps(props) {
 }
 
 const renderActiveShape = (props) => {
+
     const RADIAN = Math.PI / 180;
     const { cx, cy, midAngle, innerRadius, outerRadius, startAngle, endAngle, fill, payload, percent, value } = props;
     const sin = Math.sin(-RADIAN * midAngle);

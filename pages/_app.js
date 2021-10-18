@@ -4,10 +4,19 @@ import wrapper from "../components/store/configureStore";
 import { PersistGate } from "redux-persist/integration/react";
 import { useStore, useSelector } from "react-redux";
 import Header from "next/head";
+import App from "next/app";
+
+MyApp.getInitialProps = async (appContext) => {
+    // calls page's `getInitialProps` and fills `appProps.pageProps`
+    const appProps = await App.getInitialProps(appContext);
+    appProps.pageProps["pathname"] = appContext.router.pathname;
+
+    return { ...appProps }
+}
 
 function MyApp({ Component, pageProps }) {
     const store = useStore();
-    if (Component.name === "Home") {
+    if (pageProps.pathname === "/") {
         return (
             <PersistGate loading={null} persistor={store.__persistor}>
                 <Header>
