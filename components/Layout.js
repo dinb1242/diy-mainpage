@@ -3,6 +3,7 @@ import NavBar from "./NavBar";
 import AdminNavBar from "./AdminNavBar";
 import Footer from "./Footer";
 import Router from "next/router";
+import { useEffect } from "react";
 
 import { useSelector } from "react-redux";
 
@@ -11,6 +12,13 @@ function Layout({ children }) {
     const { adminMode } = useSelector((state) => state.user);
 
     const currentPath = Router.pathname.split('/')[1];
+
+    useEffect(() => {
+        console.log("===>이벤트 감지!");
+        Router.beforePopState(() => {
+            alert("하이하이");
+        })
+    }, [])
 
     if(adminMode && currentPath === "admin") {
         // 어드민 페이지 접근

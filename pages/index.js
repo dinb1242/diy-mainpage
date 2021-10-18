@@ -16,6 +16,8 @@ export async function getServerSideProps(props) {
 export default function Home() {
     const { isLogined } = useSelector((state) => state.user);
 
+    console.log(isLogined);
+
     return (
         <ReactFullPage
             navigation

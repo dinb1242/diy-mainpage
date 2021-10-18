@@ -27,9 +27,11 @@ export default function SelectDiy(props) {
                 <Link href="/diy/open?ver=1" as="/diy/open">
                     <div className="relative select-none cursor-pointer mb-4 transition duration-150 px-5 py-2 rounded-xl hover:text-white hover:ring-4 hover:ring-offset-2 flex flex-col shadow-md bg-gray-50 hover:bg-blue-500 w-96 backdrop">
                         <span className="font-bold text-lg">
-                            CodeB Ver.1.0 for K-Mooc
+                            D.I.Y Ver.1.0 for K-Mooc
                         </span>
-                        <span>케이무크 버전 예시 텍스트</span>
+                        <span>
+                            K-Mooc를 위한 블록 코딩 툴입니다.
+                        </span>
                     </div>
                 </Link>
 
@@ -37,8 +39,10 @@ export default function SelectDiy(props) {
                     onClick={notify}
                     className="relative select-none cursor-pointer mb-4 transition duration-150 px-5 py-2 rounded-xl hover:text-white hover:ring-4 hover:ring-offset-2 flex flex-col shadow-md bg-gray-50 hover:bg-gray-500 w-96 backdrop"
                 >
-                    <span className="font-bold text-lg">CodeB 2.0</span>
-                    <span>예시 텍스트</span>
+                    <span className="font-bold text-lg">CodeB Ver.2.0</span>
+                    <span>
+                        UI 및 사용자 편의 기능이 개편된 버전입니다.
+                    </span>
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
                         className="h-6 w-6 absolute top-5 right-5"
@@ -58,8 +62,12 @@ export default function SelectDiy(props) {
                     onClick={notify}
                     className="relative select-none cursor-pointer mb-4 transition duration-150 px-5 py-2 rounded-xl hover:text-white hover:ring-4 hover:ring-offset-2 flex flex-col shadow-md bg-gray-50 hover:bg-gray-500 w-96 backdrop"
                 >
-                    <span className="font-bold text-lg">CodeB 3.18</span>
-                    <span>예시 텍스트</span>
+                    <span className="font-bold text-lg">CodeB Ver.3.18</span>
+                    <span>
+                        최신 버전의 CodeB입니다.
+                        <br/>
+                        사용자 UI 개선 및 다양한 라이브러리를 <br/>활용할 수 있습니다.
+                    </span>
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
                         className="h-6 w-6 absolute top-5 right-5"

@@ -58,9 +58,10 @@ export default async function cookieManage(tokens, res) {
             if (refreshTokenStatus === -2 || refreshTokenStatus === -3) {
                 console.log("===>Refresh Token이 만료되었습니다. Access Token 재발급을 취소합니다.");
                 await mysqlQuery.query(`DELETE FROM tb_refresh_token WHERE token_id='${fakeRefreshToken}'`);
-                res.setHeader("Set-Cookie", [`accessToken=; path=/; expires=-1;`, `refreshToken=; path=/; expires=-1;`]);
-                res.writeHead(302, { Location: "/login" });
-                res.end()
+                console.log("===>으아악!");
+                res.setHeader("Set-Cookie", [`accessToken=; path=/; expires=-1;`, `refreshToken=; path=/; expires=-1;`])
+                    .writeHead(302, { Location: "http://localhost:3000/user/logout" })
+                    .end();
             } else {
                 console.log("===>Refresh Token이 유효합니다. Access Token 재갱신을 진행합니다.");
                 const newAccessToken = await jwt.accessRenewal(userFromToken, expLeftDay);

@@ -53,6 +53,12 @@ export default function NavBar() {
                             패치 노트
                         </a>
                     </NavBarLink>
+
+                    <NavBarLink href="/help">
+                        <a className="block lg:px-4 lg:py-2  mt-4 lg:inline-block lg:mt-0 hover:text-blue-500 mr-4 cursor-pointer">
+                            도움말
+                        </a>
+                    </NavBarLink>
                 </div>
 
                 {!isLogined && (
