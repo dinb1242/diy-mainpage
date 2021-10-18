@@ -1,4 +1,4 @@
-import { ClipboardListIcon } from "@heroicons/react/outline"
+import { ClipboardListIcon, KeyIcon } from "@heroicons/react/outline"
 import cookieManage from "../../../utils/cookieManage";
 import cookie from "next-cookies"
 import axios from "axios";
@@ -57,6 +57,7 @@ export default function UserManage(props) {
     const [enabled, setEnabled] = useState(false);
 
     let [isOpen, setIsOpen] = useState(false)
+    let [isPwModifyOpen, setIsPwModifyOpen] = useState(false)
 
     // DB에서 가져온 유저 정보에 대한 State
     const [Inputs, setInputs] = useState({
@@ -75,7 +76,8 @@ export default function UserManage(props) {
         position: "",
         enabledYn: "",
         adminYn: "",
-        searchData: ""
+        searchData: "",
+        modifiedPassword: ""
     })
 
     const onInputChange = (event) => {
@@ -133,6 +135,36 @@ export default function UserManage(props) {
         })
 
         setIsOpen(true)
+    }
+
+    // 비밀번호 변경 모달 창
+    async function openPwModifyModal(event) {
+        event.preventDefault();
+        closeModal();
+        setIsPwModifyOpen(true)
+    }
+
+    // 비밀번호 변경 모달창 닫기
+    async function closePwModifyModal() {
+        setIsPwModifyOpen(false);
+    }
+
+    // 비밀번호 변경 로직
+    async function saveModifiedPassword() {
+        console.log("==>비밀번호 변경 요청");
+        axios({
+            url: "/api/admin/user/modify",
+            method: "POST",
+            data: Inputs
+        }).then((res) => {
+            if(res.data.success) {
+                alert("성공적으로 비밀번호가 변경되었습니다.");
+            } else {
+                alert("비밀번호 변경에 실패하였습니다.");
+            }
+        })
+
+        setIsPwModifyOpen(false);
     }
 
     // 정렬 기능을 구현한다. (일반 유저, 관리자, 그 외 테이블 정렬)
@@ -549,8 +581,79 @@ export default function UserManage(props) {
                                     <button
                                         type="button"
                                         className="absolute right-10 ml-2 justify-center px-4 py-2 text-sm font-medium text-blue-900 bg-gray-200 border border-transparent rounded-md hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-500"
-                                        onClick={notYet}
+                                        onClick={openPwModifyModal}
                                     >비밀번호 변경</button>
+                                </div>
+                            </div>
+                        </Transition.Child>
+                    </div>
+                </Dialog>
+            </Transition>
+
+            {/* 비밀번호 변경 모달창 */}
+            <Transition appear show={isPwModifyOpen} as={Fragment}>
+                <Dialog
+                    as="div"
+                    className="fixed inset-0 z-10 overflow-y-auto"
+                    onClose={closePwModifyModal}
+                >
+                    <div className="min-h-screen px-4 text-center bg-opacity-50 bg-black">
+                        <Transition.Child
+                            as={Fragment}
+                            enter="ease-out duration-300"
+                            enterFrom="opacity-0"
+                            enterTo="opacity-100"
+                            leave="ease-in duration-200"
+                            leaveFrom="opacity-100"
+                            leaveTo="opacity-0"
+                        >
+                            <Dialog.Overlay className="fixed inset-0" />
+                        </Transition.Child>
+
+                        {/* 모달 콘텐츠가 브라우저 정중앙에 보이도록 하는 트릭. */}
+                        <span
+                            className="inline-block h-screen align-middle"
+                            aria-hidden="true"
+                        >
+                            &#8203;
+                        </span>
+                        <Transition.Child
+                            as={Fragment}
+                            enter="ease-out duration-300"
+                            enterFrom="opacity-0 scale-95"
+                            enterTo="opacity-100 scale-100"
+                            leave="ease-in duration-200"
+                            leaveFrom="opacity-100 scale-100"
+                            leaveTo="opacity-0 scale-95"
+                        >
+                            <div className="inline-block w-full max-w-xl p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white shadow-xl rounded-2xl">
+                                <Dialog.Title
+                                    as="h2"
+                                    className="text-lg font-bold leading-6 flex items-center text-gray-900"
+                                >
+                                    <KeyIcon className="inline-block w-6 h-6 mr-1" />
+                                    비밀번호 변경
+                                </Dialog.Title>
+                                <hr className="mt-2" />
+                                <div className="mt-2">
+                                    <input type="password" name="modifiedPassword" placeholder="변경할 비밀번호 입력" value={ Inputs.modifiedPassword } onChange={ onInputChange } />
+                                </div>
+
+                                <div className="inline-block mt-4 px-4">
+                                    <button
+                                        type="button"
+                                        className="inline-flex justify-center px-4 py-2 text-sm font-medium text-blue-900 bg-blue-100 border border-transparent rounded-md hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-500"
+                                        onClick={saveModifiedPassword}
+                                    >
+                                        변경
+                                    </button>
+                                    <button
+                                        type="button"
+                                        className="inline-flex ml-2 justify-center px-4 py-2 text-sm font-medium text-blue-900 bg-red-100 border border-transparent rounded-md hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-500"
+                                        onClick={closePwModifyModal}
+                                    >
+                                        취소
+                                    </button>
                                 </div>
                             </div>
                         </Transition.Child>
