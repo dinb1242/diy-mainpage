@@ -96,8 +96,6 @@ export default function Login() {
                         setLoginEnabledError(true);
                     } else {
                         console.log("===>로그인 성공");
-                        console.log(res.data.username);
-                        console.log(res.data.name);
                         dispatch(
                             setUserInfo({
                                 seq: res.data.seq,

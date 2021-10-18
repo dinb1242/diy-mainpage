@@ -99,7 +99,6 @@ export default function UserManage(props) {
             method: "POST",
             data: Inputs
         }).then((res) => {
-            console.log(res);
         })
 
         setIsOpen(false);

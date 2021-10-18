@@ -23,9 +23,6 @@ export default function AdminMain(props) {
     const { username, name, isLogined, isAdmin, adminMode } = useSelector(
         (state) => state.user
     );
-
-    console.log(props.data);
-
     return (
         <div className="px-24 h-auto">
             <div className="flex items-center justify-center mt-16 mb-8">
