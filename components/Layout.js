@@ -13,13 +13,6 @@ function Layout({ children }) {
 
     const currentPath = Router.pathname.split('/')[1];
 
-    useEffect(() => {
-        console.log("===>이벤트 감지!");
-        Router.beforePopState(() => {
-            alert("하이하이");
-        })
-    }, [])
-
     if(adminMode && currentPath === "admin") {
         // 어드민 페이지 접근
         return (

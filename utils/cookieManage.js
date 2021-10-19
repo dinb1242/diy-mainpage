@@ -1,6 +1,7 @@
 import jwt from "./jwt";
 import mysqlQuery from "./db";
 import randToken from "rand-token";
+import test from "../components/store/configureStore";
 
 /**
  * description: Refresh Token을 재갱신한다.
@@ -34,8 +35,11 @@ async function renewRefreshToken(fakeRefreshToken, expLeftDay) {
  */
 export default async function cookieManage(tokens, res) {
     const accessToken = tokens.accessToken;
+    console.log(accessToken);
     if(!accessToken || accessToken === "") {
+        console.log("===>토큰이 없습니다.");
         res.writeHead(302, { Location: "/login" });
+        return false;
     }
     const fakeRefreshToken = tokens.refreshToken;
     const accessTokenStatus = await jwt.verify(accessToken);
@@ -53,15 +57,12 @@ export default async function cookieManage(tokens, res) {
     if (accessTokenStatus === -2 || accessTokenStatus === -3) {
         console.log("===>유효하지 않거나, 만료된 Access Token입니다.");
         try {
-
             // Refresh Token을 검사하여 Access Token 재갱신 여부를 체크한다.
             if (refreshTokenStatus === -2 || refreshTokenStatus === -3) {
                 console.log("===>Refresh Token이 만료되었습니다. Access Token 재발급을 취소합니다.");
                 await mysqlQuery.query(`DELETE FROM tb_refresh_token WHERE token_id='${fakeRefreshToken}'`);
-                console.log("===>으아악!");
-                res.setHeader("Set-Cookie", [`accessToken=; path=/; expires=-1;`, `refreshToken=; path=/; expires=-1;`])
-                    .writeHead(302, { Location: "http://localhost:3000/user/logout" })
-                    .end();
+                await mysqlQuery.end();
+                return false;
             } else {
                 console.log("===>Refresh Token이 유효합니다. Access Token 재갱신을 진행합니다.");
                 const newAccessToken = await jwt.accessRenewal(userFromToken, expLeftDay);
@@ -74,9 +75,9 @@ export default async function cookieManage(tokens, res) {
                     res.setHeader("Set-Cookie", `accessToken=${newAccessToken}; path=/;`);
                     console.log("===>Access Token이 재갱신되었습니다.");
                 }
+                await mysqlQuery.end();
+                return true;
             }
-
-            await mysqlQuery.end();
         } catch (err) {
             console.log("===>쿠키 재발급 여부 체크 중 오류 발생!");
             console.log(err);
@@ -89,6 +90,8 @@ export default async function cookieManage(tokens, res) {
             res.setHeader("Set-Cookie", `refreshToken=${newFakeRefreshToken}; path=/;`);
             console.log("===>Refresh Token이 재갱신되었습니다.");
         }
+
+        return true;
     }
 
 }

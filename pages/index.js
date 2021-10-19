@@ -6,6 +6,8 @@ import ReactFullPage from "@fullpage/react-fullpage";
 import { ChipIcon, CodeIcon, CubeIcon, DocumentReportIcon } from "@heroicons/react/outline"
 
 import MainBannder from "../public/images/banners/main_banner.jpg";
+import Router from "next/router";
+import { useEffect } from "react";
 
 export async function getServerSideProps(props) {
     return {
@@ -15,8 +17,6 @@ export async function getServerSideProps(props) {
 
 export default function Home() {
     const { isLogined } = useSelector((state) => state.user);
-
-    console.log(isLogined);
 
     return (
         <ReactFullPage

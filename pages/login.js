@@ -6,8 +6,8 @@ import jwt from "../utils/jwt";
 import Router from "next/router";
 import DiyLogo from "../public/images/banners/diy-logo.png";
 import axios from "axios";
-import { useDispatch } from "react-redux";
-import { setUserInfo } from "../components/store/action/userAction";
+import { useDispatch, useSelector } from "react-redux";
+import { setUserInfo, deleteUserInfo } from "../components/store/action/userAction";
 
 export async function getServerSideProps(props) {
     const accessToken = cookie(props).accessToken;
@@ -15,7 +15,11 @@ export async function getServerSideProps(props) {
 
     if (accessTokenStatus !== -2 && accessTokenStatus !== -3) {
         console.log(`===>Auth Checked`);
-        props.res.writeHead(304, { Location: "/" });
+        return {
+            redirect: {
+                destination: "/"
+            }
+        }
     }
 
     return {

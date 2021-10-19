@@ -30,7 +30,16 @@ const cols = [
 
 export async function getServerSideProps(props) {
 
-    await cookieManage(cookie(props), props.res);
+    const result = await cookieManage(cookie(props), props.res);
+    if(!result) {
+        return {
+            redirect: {
+                destination: "/user/logout?invalid=true"
+            }
+        }
+    } else {
+        console.log("===>토큰이 유효함!");
+    }
 
     if (props.query.length === 0) {
         props.query["filter"] = "allUser";

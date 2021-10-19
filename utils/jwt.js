@@ -4,13 +4,13 @@ import randToken from "rand-token";
 const SECRET = "TeStKeY";
 const ACCESS_TOKEN_OPTIONS = {
     algorithm: "HS256",
-    expiresIn: "5s",
+    expiresIn: "15m",
     issuer: "tester"
 }
 
 const REFRESH_TOKEN_OPTIONS = {
     algorithm: "HS256",
-    expiresIn: "10s",
+    expiresIn: "7d",
     issuer: "tester"
 }
 

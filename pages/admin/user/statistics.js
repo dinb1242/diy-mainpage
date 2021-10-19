@@ -6,7 +6,17 @@ import { useState } from "react"
 import { ChartPieIcon, UserGroupIcon } from "@heroicons/react/outline"
 
 export async function getServerSideProps(props) {
-    await cookieManage(cookie(props), props.res);
+    const result = await cookieManage(cookie(props), props.res);
+    if(!result) {
+        return {
+            redirect: {
+                destination: "/user/logout?invalid=true"
+            }
+        }
+    } else {
+        console.log("===>토큰이 유효함!");
+    }
+    
     const { data } = await axios({
         url: "http://localhost:3000/api/admin/statistics",
         method: "POST"

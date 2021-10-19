@@ -3,9 +3,11 @@ import Layout from "../components/Layout";
 import wrapper from "../components/store/configureStore";
 import { PersistGate } from "redux-persist/integration/react";
 import { useStore, useSelector } from "react-redux";
+import { useEffect } from "react";
 import Header from "next/head";
 import App from "next/app";
 import axios from "axios";
+import Router from "next/router";
 
 MyApp.getInitialProps = async (appContext) => {
     // calls page's `getInitialProps` and fills `appProps.pageProps`
@@ -18,19 +20,17 @@ MyApp.getInitialProps = async (appContext) => {
 function MyApp({ Component, pageProps }) {
     // 로그인 되어있지 않은 사용자일 경우, 쿠키를 삭제한다. (로그인 후 페이지를 나갔을 때에는 쿠키는 남아있으나, Global State는 ""이기 때문.)
     const { seq, username, logId, isLogined } = useSelector(state => state.user);
-    if(!isLogined) {
-        axios({
-            url: "/api/user/logout",
-            method: "POST",
-            data: {
-                seq: seq,
-                username: username,
-                logId: logId
-            },
-        })
-    }
 
     const store = useStore();
+    console.log(store.getState());
+    if(store.getState()._persist.rehydrated) {
+        if(store.getState().user.seq === "") {
+            axios({
+                url: "/api/user/logout",
+                method: "POST",
+            })
+        }
+    }
     if (pageProps.pathname === "/") {
         return (
             <PersistGate loading={null} persistor={store.__persistor}>
