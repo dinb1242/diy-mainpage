@@ -22,7 +22,6 @@ function MyApp({ Component, pageProps }) {
     const { seq, username, logId, isLogined } = useSelector(state => state.user);
 
     const store = useStore();
-    console.log(store.getState());
     if(store.getState()._persist.rehydrated) {
         if(store.getState().user.seq === "") {
             axios({

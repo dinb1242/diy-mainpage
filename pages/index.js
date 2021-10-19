@@ -3,7 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useSelector } from "react-redux";
 import ReactFullPage from "@fullpage/react-fullpage";
-import { ChipIcon, CodeIcon, CubeIcon, DocumentReportIcon } from "@heroicons/react/outline"
+import { ChipIcon, CodeIcon, CubeIcon, DocumentReportIcon, ChevronDownIcon } from "@heroicons/react/outline"
 
 import MainBannder from "../public/images/banners/main_banner.jpg";
 import Router from "next/router";
@@ -114,6 +114,10 @@ export default function Home() {
                                             </button>
                                         {/* </Link> */}
                                     </div>
+                                </div>
+                                <div className="absolute flex flex-col items-center z-10 bottom-10 text-white select-none">
+                                    <p className="text-2xl font-bold animate-pulse">Scroll</p>
+                                    <ChevronDownIcon className="animate-pulse w-14" />
                                 </div>
                             </div>
                         </div>
